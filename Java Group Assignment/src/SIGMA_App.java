@@ -2,10 +2,9 @@
 import java.util.Scanner;
 public class SIGMA_App {
     public static void main(String[] args) {
-        public static void main (String[]args){
+
             SIGMA_App J = new SIGMA_App();
             J.Register_main();
-        }
     }
 
     public void Register_main()
@@ -162,3 +161,4 @@ public class SIGMA_App {
         }
     }
 }
+
