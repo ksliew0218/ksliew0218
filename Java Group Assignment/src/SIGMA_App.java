@@ -6,7 +6,7 @@ public class SIGMA_App {
             SIGMA_App J = new SIGMA_App();
             J.Register_main();
     }
-
+//123
     public void Register_main()
     {
         Scanner Sc3 = new Scanner(System.in);
