@@ -123,8 +123,8 @@ public class Register extends User{
         {
             System.out.println("Enter User Age");
             UserAge = Sc3.nextLine();
-            View TI = new View();
-            //UserAge01 = TI.tryParseInt(UserAge);
+            Register TI = new Register();
+            UserAge01 = TI.tryParseInt(UserAge);
         }
 
         //我等着你们的User Role,之后我会更新
