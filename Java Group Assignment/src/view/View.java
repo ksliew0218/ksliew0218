@@ -1,4 +1,7 @@
 package view;
 
-public class View {
+import domain.Register;
+import domain.User;
+
+public class View{
 }
