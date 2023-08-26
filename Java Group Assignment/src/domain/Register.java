@@ -36,6 +36,7 @@ public class Register extends User{
         Scanner Sc3 = new Scanner(System.in);
         String UserId = "";
         String UserPass = "";
+        String Usergender = "";
         String UserGender = "";
         String UserAge = "";
         String UserRole = "";
@@ -98,7 +99,8 @@ public class Register extends User{
         {
             int bool = 0;
             System.out.println("Enter User Gender");
-            UserGender = Sc3.nextLine();
+            Usergender = Sc3.nextLine();
+            UserGender = Usergender.toUpperCase();
             for (int i = 0; i < UserGender.length(); i++)
             {
                 if (UserGender.charAt(i) == '/') {
@@ -107,8 +109,9 @@ public class Register extends User{
                     break;
                 }
             }
-            if (bool == 1)
+            if (bool == 1 || (!UserGender.equals("MALE") && !UserGender.equals("FEMALE")))
             {
+                System.out.println(UserGender);
                 UserGender01 = 0;
             }
 
