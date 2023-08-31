@@ -6,6 +6,7 @@ public class User {
         public String UserPass;
         public String UserAge;
         public String UserRole;
+        public String Status;
 
         public User(){}
         public User(String A,String B)
@@ -14,11 +15,12 @@ public class User {
             UserPass = B;
         }
 
-        public User (String A, String B, String C, String D, String E) {
+        public User (String A, String B, String C, String D, String E, String F) {
             UserId = A;
             UserGender = B;
             UserPass = C;
             UserAge = D;
             UserRole = E;
+            Status = F;
         }
 }
