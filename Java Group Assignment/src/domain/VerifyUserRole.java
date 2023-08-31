@@ -13,8 +13,13 @@ public class VerifyUserRole {
                 String UserInfo = Sc2.nextLine();
                 String[] UserArr = UserInfo.split("/");
                 if (UserArr[4].equals("SM")) {
-                    System.out.println("Sales Manager");
+                    System.out.println("Sales Manager Menu");
                     Sales_Manager SM = new Sales_Manager();
+                }
+                else if (UserArr[4].equals("PM"))
+                {
+                    System.out.println("Project Manager Menu");
+                    Project_Manager PM = new Project_Manager();
                 }
             }
             Sc2.close();
