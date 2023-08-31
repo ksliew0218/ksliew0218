@@ -6,8 +6,8 @@ import java.io.*;
 import java.util.Scanner;
 public class Register extends User{
 
-    public Register(String A, String B, String C, String D,String E) {
-        super(A, B,C,D,E);
+    public Register(String A, String B, String C, String D,String E, String F) {
+        super(A, B,C,D,E,F);
     }
 
     public Register(){}
@@ -20,7 +20,7 @@ public class Register extends User{
             FileWriter fw = new FileWriter(MyData,true);
             BufferedWriter bw = new BufferedWriter(fw);
             try (PrintWriter pw = new PrintWriter(bw)) {
-                String UserData = "\n" + super.UserId + "/" + super.UserGender + "/" + super.UserPass + "/" + super.UserAge + "/" + super.UserRole + "/";
+                String UserData = "\n" + super.UserId + "/" + super.UserGender + "/" + super.UserPass + "/" + super.UserAge + "/" + super.UserRole + "/" + super.Status + "/";
                 pw.write(UserData);
                 pw.close();
             }
@@ -40,6 +40,7 @@ public class Register extends User{
         String UserGender = "";
         String UserAge = "";
         String UserRole = "";
+        String Role = "";
 
         int UserId01 = 0;
         int UserPass01 = 0;
@@ -130,32 +131,28 @@ public class Register extends User{
             UserAge01 = TI.tryParseInt(UserAge);
         }
 
-        //我等着你们的User Role,之后我会更新
         while (UserRole01 == 0)
         {
-            int bool = 0;
-            System.out.println("Enter User Role");
+            System.out.println("1. Sales Manager");
+            System.out.println("2. Purchase Manager");
+            System.out.println("Enter a number");
             UserRole = Sc3.nextLine();
-            for (int i = 0; i < UserRole.length(); i++)
+            if (UserRole.equals("1"))
             {
-                if (UserRole.charAt(i) == '/') {
-                    System.out.println("Invalid with '/' Symbol");
-                    bool = 1;
-                    break;
-                }
-            }
-            if (bool == 1)
-            {
-                UserRole01 = 0;
-            }
-
-            else
-            {
+                Role = "SM";
                 UserRole01 = 1;
             }
+            else if (UserRole.equals("2"))
+            {
+                Role = "PM";
+                UserRole01 = 1;
+            }
+            else
+            {
+                System.out.println("Please input the valid number");
+            }
         }
-
-        Register R = new Register(UserId,UserPass,UserGender,UserAge,UserRole);
+        Register R = new Register(UserId,UserPass,UserGender,UserAge,Role,"Pending");
         R.Register_Detail();
     }
     public int tryParseInt(String value) {

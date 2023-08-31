@@ -5,15 +5,36 @@ import domain.Login;
 import domain.Register;
 import domain.User;
 import jdk.jshell.execution.Util;
+import java.util.Scanner;
 import utility.Utility;
 
 public class View{
     public void viewMenu() {
-        System.out.println("Welcome to Menu");
-        System.out.println("1. Login");
-        System.out.println("2. Register");
-        System.out.println("3. Exit");
+        String ans = "";
+        Scanner S = new Scanner(System.in);
+        do
+        {
+            System.out.println("Welcome to Menu");
+            System.out.println("1. Login");
+            System.out.println("2. Register");
+            System.out.println("3. Exit");
+            System.out.println("Please Select a number: ");
+            ans = S.nextLine();
+            switch (ans)
+            {
+                case "1":
+                    Login L = new Login();
+                    L.Login_input();
 
+                    break;
+                case "2":
+                    Register R = new Register();
+                    R.Register_main();
+                    break;
+                case"3":
+                    System.out.println("Thank you, bye");
+            }
+        } while (!ans.equals("3"));
     }
 
     public void SalesManagerMenu() {
