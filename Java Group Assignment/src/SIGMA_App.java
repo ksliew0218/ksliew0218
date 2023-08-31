@@ -9,6 +9,6 @@ public class SIGMA_App {
     {
         View V = new View();
         V.viewMenu();
-
+        VerifyUserRole VUR = new VerifyUserRole();
     }
 }

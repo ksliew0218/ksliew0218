@@ -25,6 +25,7 @@ public class View{
                 case "1":
                     Login L = new Login();
                     L.Login_input();
+
                     break;
                 case "2":
                     Register R = new Register();

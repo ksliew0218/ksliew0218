@@ -22,7 +22,11 @@ public class Login extends User
         System.out.println("Please input your password");
         Password = input.nextLine();
         Login L = new Login(User_ID,Password);
-        L.Login_Detail();
+        if (L.Login_Detail() == 1)
+        {
+            VerifyUserRole VUR = new VerifyUserRole();
+            VUR.verifyUserRole();
+        }
     }
     public int Login_Detail()
     {
