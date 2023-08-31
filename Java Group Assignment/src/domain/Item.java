@@ -140,6 +140,7 @@ public class Item implements Entry {
         this.minStockLevel = Utility.readInt();
 
         // Confirm addition
+        System.out.println("\nAre you sure you want to save?");
         char confirm = Utility.readConfirmSelection();
         if (confirm == 'Y') {
             if (itemDAO.saveItem(this)) {
@@ -179,6 +180,7 @@ public class Item implements Entry {
         }
 
         // Confirm deletion
+        System.out.println("\nAre you sure you want to delete and save?");
         char confirm = Utility.readConfirmSelection();
         if (confirm == 'Y') {
             if (itemDAO.deleteItem(itemCode)) {
