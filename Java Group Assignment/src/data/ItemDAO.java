@@ -116,4 +116,77 @@ public class ItemDAO {
         return true;
     }
 
+
+    public void searchItemsByName(String itemName) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
+            String line;
+            boolean itemFound = false;
+
+            while ((line = reader.readLine()) != null) {
+                String[] fields = line.split("\\" + DELIMITER);
+                if (fields.length < 9) {
+                    continue; // Skip lines with insufficient data
+                }
+
+                String existingItemName = fields[1]; // Assuming the name is the second field
+
+                if (existingItemName.equalsIgnoreCase(itemName)) {
+                    // Print item details
+                    System.out.println();
+                    System.out.println("Item Code:           " + fields[0]);
+                    System.out.println("Item Name:           " + fields[1]);
+                    System.out.println("Quantity:            " + fields[2]);
+                    System.out.println("Unit Price:          " + fields[3]);
+                    System.out.println("Supplier ID:         " + fields[4]);
+                    System.out.println("Category:            " + fields[5]);
+                    System.out.println("Expiry Date:         " + (fields[6].isEmpty() ? "N/A" : fields[6]));
+                    System.out.println("Is Available:        " + fields[7]);
+                    System.out.println("Minimum Stock Level: " + fields[8]);
+                    System.out.println("----------------------------------------------------");
+                    itemFound = true;
+                }
+            }
+            if (!itemFound) {
+                System.out.println("No items found with the provided name.");
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void searchItemsByCategory(String category) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
+            String line;
+            boolean itemFound = false;
+
+            while ((line = reader.readLine()) != null) {
+                String[] fields = line.split("\\" + DELIMITER);
+                if (fields.length < 9) {
+                    continue; // Skip lines with insufficient data
+                }
+
+                String existingCategory = fields[5]; // Assuming the category is the sixth field
+
+                if (existingCategory.equalsIgnoreCase(category)) {
+                    // Print item details
+                    System.out.println("----------------------------");
+                    System.out.println("Item Code: " + fields[0]);
+                    System.out.println("Item Name: " + fields[1]);
+                    System.out.println("Quantity: " + fields[2]);
+                    // ... display other fields ...
+                    itemFound = true;
+                }
+            }
+
+            if (!itemFound) {
+                System.out.println("No items found with the provided category.");
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 }

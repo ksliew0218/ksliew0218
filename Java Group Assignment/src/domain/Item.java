@@ -200,12 +200,18 @@ public class Item implements Entry {
     }
 
     public void searchItem_byCategory() {
-        System.out.println("category");
+        System.out.print("Enter the Item Category to search: ");
+        String category = Utility.readString(10);
+        new ItemDAO().searchItemsByCategory(category);
     }
 
-    public void searchItem_byName() {
-        System.out.println("name");
+        public void searchItem_byName() {
+        System.out.print("Enter the Item Name to search: ");
+        String itemName = Utility.readString(50);
+        new ItemDAO().searchItemsByName(itemName);
+
     }
+
     // Additional methods specific to Item
     // ...
 }

@@ -1,3 +1,4 @@
 IT002$Fries$20$10.0$McDonald$Food$12/12/2024$true$10
 IT003$Milo$20$30.0$F&N$Beverages$12/12/2023$true$10
 IT001$Burger$10$7.0$Ayamas$Food$12/12/2023$true$10
+IT005$Fries$15$12.0$SP005$Food$12/12/2023$false$12
