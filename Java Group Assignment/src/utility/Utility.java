@@ -1,9 +1,11 @@
 package utility;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Scanner;
 
 public class Utility {
-    //静态属性。。。
     private static Scanner scanner = new Scanner(System.in);
 
 
@@ -163,5 +165,65 @@ public class Utility {
         }
 
         return line;
+    }
+
+    public static boolean readBoolean() {
+        boolean validInput = false;
+        boolean result = false;
+
+        while (!validInput) {
+            System.out.print("Please enter 'true' or 'false':");
+            String available = readString(5); // Reading as string
+            if ("true".equalsIgnoreCase(available) || "false".equalsIgnoreCase(available)) {
+                result = "true".equalsIgnoreCase(available);
+                validInput = true;  // exit the loop
+            } else {
+                System.out.print("Invalid input. Please try again. ");
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * 功能：读取键盘输入的日期值，格式为 dd/MM/yyyy
+     * @return 日期
+     */
+    public static Date readDate() {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        sdf.setLenient(false); // this will not enable 25/13/2021 as valid input
+        Date date = null;
+        boolean validInput = false;
+
+        while (!validInput) {
+            System.out.print("Please enter the date in dd/MM/yyyy format: ");
+            String dateString = readString(10); // Reading as string
+            try {
+                date = sdf.parse(dateString);
+                validInput = true; // exit the loop if parsing is successful
+            } catch (ParseException e) {
+                System.out.print("Invalid date format. Please try again. ");
+            }
+        }
+
+        return date;
+    }
+
+        /**
+     * 功能：读取键盘输入的双精度浮点数
+     * @return 双精度浮点数
+     */
+    public static double readDouble() {
+        double n;
+        for (; ; ) {
+            String str = readKeyBoard(10, false); // an arbitrary limit of 10 characters
+            try {
+                n = Double.parseDouble(str); //将字符串转换成双精度浮点数
+                break;
+            } catch (NumberFormatException e) {
+                System.out.print("数字输入错误，请重新输入：");
+            }
+        }
+        return n;
     }
 }
