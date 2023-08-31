@@ -2,8 +2,8 @@ package domain;
 
 import data.ItemDAO;
 import utility.Utility;
-
 import java.util.Date;
+import java.util.List;
 
 public class Item implements Entry {
     private String itemCode;
@@ -130,7 +130,7 @@ public class Item implements Entry {
         System.out.print("Enter Category: ");
         this.category = Utility.readString(20);
 
-        System.out.print("Enter the expiry date. ");
+        System.out.print("Enter the expiry date: ");
         this.expiryDate = Utility.readDate();
 
         System.out.print("Is the item available? ");
@@ -139,27 +139,71 @@ public class Item implements Entry {
         System.out.print("Enter Minimum Stock Level: ");
         this.minStockLevel = Utility.readInt();
 
-
-        if (itemDAO.saveItem(this)) {
-            System.out.println("Item successfully saved.");
+        // Confirm addition
+        char confirm = Utility.readConfirmSelection();
+        if (confirm == 'Y') {
+            if (itemDAO.saveItem(this)) {
+                System.out.println("Item successfully saved.");
+            } else {
+                System.out.println("Failed to save the item.");
+            }
         } else {
-            System.out.println("Failed to save the item.");
+            System.out.println("Item addition cancelled.");
         }
-
     }
+
 
     public void edit() {
         // Logic to edit item
     }
 
     public void delete() {
-        // Logic to delete item
+        ItemDAO itemDAO = new ItemDAO();
+
+        // Display all items
+        itemDAO.viewAllItems();
+
+        // Read all existing item codes
+        List<String> existingItemCodes = itemDAO.readItemCodes();
+
+        // Ask user to enter itemCode
+        String itemCode;
+        while (true) {
+            System.out.print("Enter the Item Code of the item you wish to delete: ");
+            itemCode = Utility.readString(10);
+            if (existingItemCodes.contains(itemCode)) {
+                break;
+            } else {
+                System.out.println("Item code not found. Please try again.");
+            }
+        }
+
+        // Confirm deletion
+        char confirm = Utility.readConfirmSelection();
+        if (confirm == 'Y') {
+            if (itemDAO.deleteItem(itemCode)) {
+                System.out.println("Item deleted successfully.");
+            } else {
+                System.out.println("Failed to delete the item.");
+            }
+        } else {
+            System.out.println("Item deletion cancelled.");
+        }
     }
+
 
     public void view() {
-        // Logic to view item details
+        System.out.println("\nItems List are printed as below: \n");
+        new ItemDAO().viewAllItems();
     }
 
+    public void searchItem_byCategory() {
+        System.out.println("category");
+    }
+
+    public void searchItem_byName() {
+        System.out.println("name");
+    }
     // Additional methods specific to Item
     // ...
 }

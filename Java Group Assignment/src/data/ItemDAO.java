@@ -41,7 +41,7 @@ public class ItemDAO {
         return itemCodes.contains(itemCode);
     }
 
-    private List<String> readItemCodes() {
+    public List<String> readItemCodes() {
         List<String> itemCodes = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
             String line;
@@ -58,6 +58,62 @@ public class ItemDAO {
             e.printStackTrace();
         }
         return itemCodes;
+    }
+
+    public void viewAllItems() {
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] fields = line.split("\\" + DELIMITER);
+                if (fields.length < 9) {
+                    continue; // skip lines with insufficient data
+                }
+
+                // Print each field directly
+                System.out.println("Item Code:           " + fields[0]);
+                System.out.println("Item Name:           " + fields[1]);
+                System.out.println("Quantity:            " + fields[2]);
+                System.out.println("Unit Price:          " + fields[3]);
+                System.out.println("Supplier ID:         " + fields[4]);
+                System.out.println("Category:            " + fields[5]);
+                System.out.println("Expiry Date:         " + (fields[6].isEmpty() ? "N/A" : fields[6]));
+                System.out.println("Is Available:        " + fields[7]);
+                System.out.println("Minimum Stock Level: " + fields[8]);
+                System.out.println("----------------------------------------------------");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean deleteItem(String itemCode) {
+        List<String> lines = new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] fields = line.split("\\" + DELIMITER);
+                if (fields.length < 9) {
+                    continue; // skip lines with insufficient data
+                }
+                if (!fields[0].equals(itemCode)) {
+                    lines.add(line);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
+            for (String line : lines) {
+                writer.write(line + "\n");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 
 }

@@ -115,7 +115,7 @@ public class Utility {
      * @return Y或N
      */
     public static char readConfirmSelection() {
-        System.out.println("请输入你的选择(Y/N)");
+        System.out.print("Please input your choice(Y/N): ");
         char c;
         for (; ; ) {//无限循环
             //在这里，将接受到字符，转成了大写字母
@@ -125,7 +125,7 @@ public class Utility {
             if (c == 'Y' || c == 'N') {
                 break;
             } else {
-                System.out.print("选择错误，请重新输入：");
+                System.out.print("Invalid input, please try again：");
             }
         }
         return c;
