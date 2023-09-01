@@ -16,19 +16,19 @@ public class Item implements Entry {
     private boolean isAvailable;
     private int minStockLevel;
 
-//    public Item(String itemCode, String itemName, int quantity, double unitPrice, String supplierId, String category, Date expiryDate, boolean isAvailable, int minStockLevel) {
-//        this.itemCode = itemCode;
-//        this.itemName = itemName;
-//        this.quantity = quantity;
-//        this.unitPrice = unitPrice;
-//        this.supplierId = supplierId;
-//        this.category = category;
-//        this.expiryDate = expiryDate;
-//        this.isAvailable = isAvailable;
-//        this.minStockLevel = minStockLevel;
-//    }
+    public Item(String itemCode, String itemName, int quantity, double unitPrice, String supplierId, String category, Date expiryDate, boolean isAvailable, int minStockLevel) {
+        this.itemCode = itemCode;
+        this.itemName = itemName;
+        this.quantity = quantity;
+        this.unitPrice = unitPrice;
+        this.supplierId = supplierId;
+        this.category = category;
+        this.expiryDate = expiryDate;
+        this.isAvailable = isAvailable;
+        this.minStockLevel = minStockLevel;
+    }
 
-
+    public Item(){}
 
     public String getItemCode() {
         return itemCode;
@@ -153,10 +153,78 @@ public class Item implements Entry {
         }
     }
 
-
     public void edit() {
-        // Logic to edit item
+        ItemDAO itemDAO = new ItemDAO();
+
+        // Display the items to the user so they can pick which one to edit
+        itemDAO.viewAllItems();
+
+        System.out.print("Enter the Item Code of the item you want to edit: ");
+        String itemCodeToEdit = Utility.readString(10);
+
+        if (!itemDAO.checkDuplicateItemCode(itemCodeToEdit)) {
+            System.out.println("Item Code does not exist.");
+            return;
+        }
+
+        Item itemToEdit = itemDAO.getItemByItemCode(itemCodeToEdit);
+        // Re-prompt for each attribute and show its current value
+        System.out.println("Current Item Name: " + itemToEdit.getItemName());
+        System.out.print("Enter New Item Name: ");
+        String newItemName = Utility.readString(50);
+
+        System.out.println("Current Quantity: " + itemToEdit.getQuantity());
+        System.out.print("Enter New Quantity: ");
+        int newQuantity = Utility.readInt();
+
+        System.out.println("Current Unit Price: " + itemToEdit.getUnitPrice());
+        System.out.print("Enter New Unit Price: ");
+        double newUnitPrice = Utility.readDouble();
+
+        System.out.println("Current Supplier ID: " + itemToEdit.getSupplierId());
+        System.out.print("Enter New Supplier ID: ");
+        String newSupplierId = Utility.readString(10);
+
+        System.out.println("Current Category: " + itemToEdit.getCategory());
+        System.out.print("Enter New Category: ");
+        String newCategory = Utility.readString(20);
+
+        System.out.println("Current Expiry Date: " + itemToEdit.getExpiryDate());
+        System.out.print("Enter New Expiry Date: ");
+        Date newExpiryDate = Utility.readDate();
+
+        System.out.println("Current Availability: " + itemToEdit.isAvailable());
+        System.out.print("Enter New Availability: ");
+        boolean newIsAvailable = Utility.readBoolean();
+
+        System.out.println("Current Minimum Stock Level: " + itemToEdit.getMinStockLevel());
+        System.out.print("Enter New Minimum Stock Level: ");
+        int newMinStockLevel = Utility.readInt();
+
+        // After collecting all new values, ask for confirmation
+        System.out.print("Are you sure you want to update this item? (Y/N): ");
+        char confirm = Utility.readConfirmSelection();
+
+        if (confirm == 'Y' || confirm == 'y') {
+            // Create a new Item object with the new data
+            Item updatedItem = new Item(
+                    itemCodeToEdit, newItemName, newQuantity, newUnitPrice,
+                    newSupplierId, newCategory, newExpiryDate, newIsAvailable,
+                    newMinStockLevel
+            );
+
+            // Update the item in the data store
+            if (itemDAO.editItem(itemCodeToEdit, updatedItem)) {
+                System.out.println("Item successfully updated.");
+            } else {
+                System.out.println("Failed to update the item.");
+            }
+        } else {
+            System.out.println("Item update cancelled.");
+        }
     }
+
+
 
     public void delete() {
         ItemDAO itemDAO = new ItemDAO();

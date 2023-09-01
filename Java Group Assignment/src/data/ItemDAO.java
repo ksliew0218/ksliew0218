@@ -3,6 +3,7 @@ package data;
 import domain.Item;
 
 import java.io.*;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -186,6 +187,92 @@ public class ItemDAO {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+
+    public boolean editItem(String itemCode, Item updatedItem) {
+        List<String> lines = new ArrayList<>();
+        boolean itemFound = false;
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] fields = line.split("\\" + DELIMITER);
+                if (fields.length < 9) {
+                    continue; // skip lines with insufficient data
+                }
+
+                if (fields[0].equals(itemCode)) {
+                    String expiryDateStr = (updatedItem.getExpiryDate() != null) ? sdf.format(updatedItem.getExpiryDate()) : "";
+                    line = updatedItem.getItemCode() + DELIMITER +
+                            updatedItem.getItemName() + DELIMITER +
+                            updatedItem.getQuantity() + DELIMITER +
+                            updatedItem.getUnitPrice() + DELIMITER +
+                            updatedItem.getSupplierId() + DELIMITER +
+                            updatedItem.getCategory() + DELIMITER +
+                            expiryDateStr + DELIMITER +
+                            updatedItem.isAvailable() + DELIMITER +
+                            updatedItem.getMinStockLevel();
+                    itemFound = true;
+                }
+                lines.add(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        if (!itemFound) {
+            return false;
+        }
+
+        // Write the updated lines back to the file
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
+            for (String line : lines) {
+                writer.write(line);
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
+    }
+
+    public Item getItemByItemCode(String itemCode) {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] fields = line.split("\\" + DELIMITER);
+                if (fields.length < 9) {
+                    continue; // skip lines with insufficient data
+                }
+                if (fields[0].equals(itemCode)) {
+                    // Found the item, now create an Item object
+                    String itemName = fields[1];
+                    int quantity = Integer.parseInt(fields[2]);
+                    double unitPrice = Double.parseDouble(fields[3]);
+                    String supplierId = fields[4];
+                    String category = fields[5];
+                    Date expiryDate = null;
+                    try {
+                        expiryDate = (fields[6].isEmpty()) ? null : sdf.parse(fields[6]);
+                    } catch (ParseException e) {
+                        System.out.println("Error parsing date for item " + itemCode);
+                    }
+                    boolean isAvailable = Boolean.parseBoolean(fields[7]);
+                    int minStockLevel = Integer.parseInt(fields[8]);
+
+                    return new Item(itemCode, itemName, quantity, unitPrice, supplierId, category, expiryDate, isAvailable, minStockLevel);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null; // Return null if item not found
     }
 
 

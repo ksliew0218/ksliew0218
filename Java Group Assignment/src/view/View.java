@@ -8,34 +8,32 @@ import jdk.jshell.execution.Util;
 import java.util.Scanner;
 import utility.Utility;
 
-public class View{
-    public void viewMenu() {
-        String ans = "";
-        Scanner S = new Scanner(System.in);
-        do
-        {
+public class View {
+    public void mainMenu() {
+        char choice;
+        do {
             System.out.println("Welcome to Menu");
             System.out.println("1. Login");
             System.out.println("2. Register");
             System.out.println("3. Exit");
-            System.out.println("Please Select a number: ");
-            ans = S.nextLine();
-            switch (ans)
-            {
-                case "1":
+            System.out.print("Please Select a number: ");
+            choice = Utility.readChar();
+
+            switch (choice) {
+                case '1' -> {
                     Login L = new Login();
                     L.Login_input();
-
-                    break;
-                case "2":
+                }
+                case '2' -> {
                     Register R = new Register();
                     R.Register_main();
-                    break;
-                case"3":
-                    System.out.println("Thank you, bye");
+                }
+                case '3' -> System.out.println("Thank you, bye");
+                default -> System.out.println("Invalid choice. Please try again.");
             }
-        } while (!ans.equals("3"));
+        } while (choice != '3');
     }
+
 
     public void SalesManagerMenu() {
         System.out.println("testing");
