@@ -26,7 +26,7 @@ public class ItemDAO {
                     item.getSupplierId() + DELIMITER +
                     item.getCategory() + DELIMITER +
                     expiryDateStr + DELIMITER +
-                    item.isAvailable() + DELIMITER +
+                    item.isInStock() + DELIMITER +
                     item.getMinStockLevel() + "\n";
 
             writer.write(line);
@@ -79,7 +79,7 @@ public class ItemDAO {
                 System.out.println("Supplier ID:         " + fields[4]);
                 System.out.println("Category:            " + fields[5]);
                 System.out.println("Expiry Date:         " + (fields[6].isEmpty() ? "N/A" : fields[6]));
-                System.out.println("Is Available:        " + fields[7]);
+                System.out.println("Is In Stock:         " + fields[7]);
                 System.out.println("Minimum Stock Level: " + fields[8]);
                 System.out.println("----------------------------------------------------");
             }
@@ -141,7 +141,7 @@ public class ItemDAO {
                     System.out.println("Supplier ID:         " + fields[4]);
                     System.out.println("Category:            " + fields[5]);
                     System.out.println("Expiry Date:         " + (fields[6].isEmpty() ? "N/A" : fields[6]));
-                    System.out.println("Is Available:        " + fields[7]);
+                    System.out.println("Is In Stock :        " + fields[7]);
                     System.out.println("Minimum Stock Level: " + fields[8]);
                     System.out.println("----------------------------------------------------");
                     itemFound = true;
@@ -212,7 +212,7 @@ public class ItemDAO {
                             updatedItem.getSupplierId() + DELIMITER +
                             updatedItem.getCategory() + DELIMITER +
                             expiryDateStr + DELIMITER +
-                            updatedItem.isAvailable() + DELIMITER +
+                            updatedItem.isInStock() + DELIMITER +
                             updatedItem.getMinStockLevel();
                     itemFound = true;
                 }
@@ -263,10 +263,10 @@ public class ItemDAO {
                     } catch (ParseException e) {
                         System.out.println("Error parsing date for item " + itemCode);
                     }
-                    boolean isAvailable = Boolean.parseBoolean(fields[7]);
+                    boolean isInStock = Boolean.parseBoolean(fields[7]);
                     int minStockLevel = Integer.parseInt(fields[8]);
 
-                    return new Item(itemCode, itemName, quantity, unitPrice, supplierId, category, expiryDate, isAvailable, minStockLevel);
+                    return new Item(itemCode, itemName, quantity, unitPrice, supplierId, category, expiryDate, isInStock, minStockLevel);
                 }
             }
         } catch (IOException e) {

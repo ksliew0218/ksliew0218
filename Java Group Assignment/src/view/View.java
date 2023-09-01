@@ -1,9 +1,6 @@
 package view;
 
-import domain.Item;
-import domain.Login;
-import domain.Register;
-import domain.User;
+import domain.*;
 import jdk.jshell.execution.Util;
 import java.util.Scanner;
 import utility.Utility;
@@ -69,6 +66,31 @@ public class View {
         } while (true);
     }
 
-// Implement or call the methods like addItem(), deleteItem(), edit
+
+    public void SupplierEntryMenu() {
+        char choice;
+        Supplier supplier = new Supplier();
+        do {
+            System.out.println("\t\t\t1. Add Supplier");
+            System.out.println("\t\t\t2. Delete Supplier");
+            System.out.println("\t\t\t3. Edit Supplier");
+            System.out.println("\t\t\t4. Back");
+
+            System.out.print("Please enter your choice: ");
+            choice = Utility.readChar();
+
+            switch (choice) {
+                case '1' -> supplier.add();
+                case '2' -> supplier.delete();
+                case '3' -> supplier.edit();
+                case '4' -> {
+                    System.out.println("Exiting supplier entry menu.");
+                    return;
+                }
+                default -> System.out.println("Invalid choice. Please try again.");
+            }
+        } while (true);
+    }
+
 
 }

@@ -1,7 +1,10 @@
 package domain;
 
 import data.ItemDAO;
+import data.SupplierDAO;
 import utility.Utility;
+import view.View;
+
 import java.util.Date;
 import java.util.List;
 
@@ -13,10 +16,10 @@ public class Item implements Entry {
     private String supplierId;
     private String category;
     private Date expiryDate;
-    private boolean isAvailable;
+    private boolean isInStock;
     private int minStockLevel;
 
-    public Item(String itemCode, String itemName, int quantity, double unitPrice, String supplierId, String category, Date expiryDate, boolean isAvailable, int minStockLevel) {
+    public Item(String itemCode, String itemName, int quantity, double unitPrice, String supplierId, String category, Date expiryDate, boolean isInStock, int minStockLevel) {
         this.itemCode = itemCode;
         this.itemName = itemName;
         this.quantity = quantity;
@@ -24,7 +27,7 @@ public class Item implements Entry {
         this.supplierId = supplierId;
         this.category = category;
         this.expiryDate = expiryDate;
-        this.isAvailable = isAvailable;
+        this.isInStock = isInStock;
         this.minStockLevel = minStockLevel;
     }
 
@@ -86,12 +89,12 @@ public class Item implements Entry {
         this.expiryDate = expiryDate;
     }
 
-    public boolean isAvailable() {
-        return isAvailable;
+    public boolean isInStock() {
+        return isInStock;
     }
 
     public void setAvailable(boolean available) {
-        isAvailable = available;
+        isInStock = available;
     }
 
     public int getMinStockLevel() {
@@ -105,6 +108,7 @@ public class Item implements Entry {
     // Implementing the Entry interface methods
     public void add() {
         ItemDAO itemDAO = new ItemDAO();
+        SupplierDAO supplierDAO = new SupplierDAO();
         do {
             System.out.print("Enter Item Code: ");
             itemCode = Utility.readString(10);
@@ -124,8 +128,15 @@ public class Item implements Entry {
         System.out.print("Enter Unit Price: ");
         this.unitPrice = Utility.readDouble();
 
-        System.out.print("Enter Supplier ID: ");
-        this.supplierId = Utility.readString(10);
+        do {
+            System.out.print("Enter Supplier ID: ");
+            supplierId = Utility.readString(10);
+            if (!supplierDAO.checkExistingSupplierID(supplierId)) {
+                System.out.println("This Supplier ID does not exist. You need to add the supplier first. Please try again.");
+                return;
+            }
+        } while (!supplierDAO.checkExistingSupplierID(supplierId));
+
 
         System.out.print("Enter Category: ");
         this.category = Utility.readString(20);
@@ -133,11 +144,10 @@ public class Item implements Entry {
         System.out.print("Enter the expiry date: ");
         this.expiryDate = Utility.readDate();
 
-        System.out.print("Is the item available? ");
-        this.isAvailable = Utility.readBoolean();
-
         System.out.print("Enter Minimum Stock Level: ");
         this.minStockLevel = Utility.readInt();
+
+        this.isInStock = this.quantity >= this.minStockLevel;
 
         // Confirm addition
         System.out.println("\nAre you sure you want to save?");
@@ -193,9 +203,9 @@ public class Item implements Entry {
         System.out.print("Enter New Expiry Date: ");
         Date newExpiryDate = Utility.readDate();
 
-        System.out.println("Current Availability: " + itemToEdit.isAvailable());
+        System.out.println("Current Availability: " + itemToEdit.isInStock());
         System.out.print("Enter New Availability: ");
-        boolean newIsAvailable = Utility.readBoolean();
+        boolean newisInStock = Utility.readBoolean();
 
         System.out.println("Current Minimum Stock Level: " + itemToEdit.getMinStockLevel());
         System.out.print("Enter New Minimum Stock Level: ");
@@ -209,7 +219,7 @@ public class Item implements Entry {
             // Create a new Item object with the new data
             Item updatedItem = new Item(
                     itemCodeToEdit, newItemName, newQuantity, newUnitPrice,
-                    newSupplierId, newCategory, newExpiryDate, newIsAvailable,
+                    newSupplierId, newCategory, newExpiryDate, newisInStock,
                     newMinStockLevel
             );
 

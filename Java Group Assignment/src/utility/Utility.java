@@ -226,4 +226,39 @@ public class Utility {
         }
         return n;
     }
+
+    public static String readContactNumber() {
+        String contactNumber;
+        for (; ; ) {
+            System.out.print("Enter Contact Number: ");
+            contactNumber = readString(11); // Max length 11 to accommodate 10 or 11 digit numbers
+            if (contactNumber.length() == 10 || contactNumber.length() == 11) {
+                try {
+                    Long.parseLong(contactNumber); // Check if it's a valid number
+                    break;
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid number. Please enter a 10 or 11-digit contact number.");
+                }
+            } else {
+                System.out.println("Invalid length. Please enter a 10 or 11-digit contact number.");
+            }
+        }
+        return contactNumber;
+    }
+
+    public static String readEmail() {
+        String email;
+        for (; ; ) {
+            System.out.print("Enter Email: ");
+            email = readString(50); // Max length 50 for email
+            if (email.contains("@") && email.contains(".")) {
+                // Add more validation if needed
+                break;
+            } else {
+                System.out.println("Invalid email format. Please include '@' and '.'");
+            }
+        }
+        return email;
+    }
+
 }
