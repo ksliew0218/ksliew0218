@@ -1,5 +1,6 @@
 package data;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Scanner;
 public class Aprove_Or_Reject_UserRole {
     public Aprove_Or_Reject_UserRole (){}
@@ -35,8 +36,10 @@ public class Aprove_Or_Reject_UserRole {
 
     public void search_and_decision()
     {
+        ArrayList<String> updatedStatus = new ArrayList<>();
         String search = "";
         String decision = "";
+        boolean exit = true;
         Scanner ans = new Scanner(System.in);
         do
         {
@@ -50,18 +53,71 @@ public class Aprove_Or_Reject_UserRole {
                 while(Sc2.hasNextLine())
                 {
                     String UserInfo = Sc2.nextLine();
-                    String[] UserArr = UserInfo.split("/");
+                    String[] UserArr = UserInfo.split("[/\n]");
 
-                    if (UserArr[1].equals(search))
+                    if (UserArr[0].equals(search) && UserArr[5].equals("Pending"))
                     {
                         System.out.println("User ID: " + UserArr[0]);
                         System.out.println("User Gender: " + UserArr[2]);
                         System.out.println("User Age: " + UserArr[3]);
                         System.out.println("User Role: " + UserArr[4]);
                         System.out.println("Status: " + UserArr[5]);
+                        System.out.println("1. Approve");
+                        System.out.println("2. Reject");
+                        System.out.println("3. Pending");
+                        decision = ans.nextLine();
+                        if (decision.equals("1"))
+                        {
+                            UserArr[5] = "Approve";
+                        }
+                        else if (decision.equals("2"))
+                        {
+                            UserArr[5] = "Reject";
+                        }
+                        else if (decision.equals("3"))
+                        {
+                            UserArr[5] = "Pending";
+                        }
+                        updatedStatus.add(UserArr[0]);
+                        updatedStatus.add("/");
+                        updatedStatus.add(UserArr[1]);
+                        updatedStatus.add("/");
+                        updatedStatus.add(UserArr[2]);
+                        updatedStatus.add("/");
+                        updatedStatus.add(UserArr[3]);
+                        updatedStatus.add("/");
+                        updatedStatus.add(UserArr[4]);
+                        updatedStatus.add("/");
+                        updatedStatus.add(UserArr[5]);
+                        updatedStatus.add("/");
+                        updatedStatus.add("\n");
+                    }
+                    else
+                    {
+                        System.out.println("Other User Detail:" + String.valueOf(UserArr));
+                        updatedStatus.add(UserArr[0]);
+                        updatedStatus.add("/");
+                        updatedStatus.add(UserArr[1]);
+                        updatedStatus.add("/");
+                        updatedStatus.add(UserArr[2]);
+                        updatedStatus.add("/");
+                        updatedStatus.add(UserArr[3]);
+                        updatedStatus.add("/");
+                        updatedStatus.add(UserArr[4]);
+                        updatedStatus.add("/");
+                        updatedStatus.add(UserArr[5]);
+                        updatedStatus.add("/");
+                        updatedStatus.add("\n");
                     }
                 }
                 myData.close();
+                FileWriter FW = new FileWriter("UserData.txt");
+                for (String value: updatedStatus)
+                {
+                    FW.write(value);
+                }
+                FW.close();
+                updatedStatus.clear();
                 }
             }
 
@@ -69,13 +125,6 @@ public class Aprove_Or_Reject_UserRole {
         {
             System.out.println("File Error");
         }
-            System.out.println("1. Approve");
-            System.out.println("2. Reject");
-            System.out.println("3. Pending");
-
-
-
-
-        }while(!decision.equals("3"));
+        }while(exit != false);
     }
 }
