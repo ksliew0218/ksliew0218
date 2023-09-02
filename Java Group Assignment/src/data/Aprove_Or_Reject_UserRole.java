@@ -53,7 +53,7 @@ public class Aprove_Or_Reject_UserRole {
                 while(Sc2.hasNextLine())
                 {
                     String UserInfo = Sc2.nextLine();
-                    String[] UserArr = UserInfo.split("[/\n]");
+                    String[] UserArr = UserInfo.split("/");
 
                     if (UserArr[0].equals(search) && UserArr[5].equals("Pending"))
                     {
@@ -94,7 +94,6 @@ public class Aprove_Or_Reject_UserRole {
                     }
                     else
                     {
-                        System.out.println("Other User Detail:" + String.valueOf(UserArr));
                         updatedStatus.add(UserArr[0]);
                         updatedStatus.add("/");
                         updatedStatus.add(UserArr[1]);
@@ -114,10 +113,12 @@ public class Aprove_Or_Reject_UserRole {
                 FileWriter FW = new FileWriter("UserData.txt");
                 for (String value: updatedStatus)
                 {
+                    System.out.print(value);
                     FW.write(value);
                 }
                 FW.close();
                 updatedStatus.clear();
+                //bug, when have double "\n" (empty line)
                 }
             }
 

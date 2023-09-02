@@ -20,7 +20,7 @@ public class Register extends User{
             FileWriter fw = new FileWriter(MyData,true);
             BufferedWriter bw = new BufferedWriter(fw);
             try (PrintWriter pw = new PrintWriter(bw)) {
-                String UserData = "\n" + super.UserId + "/" + super.UserGender + "/" + super.UserPass + "/" + super.UserAge + "/" + super.UserRole + "/" + super.Status + "/";
+                String UserData = super.UserId + "/" + super.UserGender + "/" + super.UserPass + "/" + super.UserAge + "/" + super.UserRole + "/" + super.Status + "/" + "\n";
                 pw.write(UserData);
                 pw.close();
             }
@@ -53,6 +53,26 @@ public class Register extends User{
             int bool = 0;
             System.out.println("Enter User ID");
             UserId = Sc3.nextLine();
+            try (FileReader myData = new FileReader("UserData.txt"))
+            {
+                Scanner Sc2 = new Scanner(myData);
+                while(Sc2.hasNextLine())
+                {
+                    String UserInfo = Sc2.nextLine();
+                    String[] UserArr = UserInfo.split("/");
+
+                    if (UserArr[0].equals(UserId))
+                    {
+                        System.out.println("Already Have This UserID");
+                        bool = 1;
+                    }
+                }
+                myData.close();
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             for (int i = 0; i < UserId.length(); i++)
             {
                 if (UserId.charAt(i) == '/') {
