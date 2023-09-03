@@ -149,4 +149,100 @@ public class DailySalesDAO {
         }
     }
 
+    public boolean deleteSalesEntry(Date date, String itemCode) {
+        List<String> lines = new ArrayList<>();
+        boolean entryFound = false;
+        String targetDate = sdf.format(date);
+
+        // Read existing file
+        try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split("\\" + DELIMITER);
+                if (parts.length < 7) {
+                    continue;
+                }
+
+                String saleDate = parts[0];
+                String saleItemCode = parts[1];
+                if (saleDate.equals(targetDate) && saleItemCode.equals(itemCode)) {
+                    entryFound = true;
+                    continue;  // Skip this line to remove it
+                }
+                lines.add(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        // Write updated file
+        if (entryFound) {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
+                for (String line : lines) {
+                    writer.write(line);
+                    writer.newLine();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+
+        return entryFound;
+    }
+
+    public boolean editDailySales(Date dateToEdit, String itemCodeToEdit, DailySales updatedDailySale) {
+        List<String> lines = new ArrayList<>();
+        boolean entryFound = false;
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        String targetDate = sdf.format(dateToEdit);
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] fields = line.split("\\" + DELIMITER);
+                if (fields.length < 7) {
+                    continue;  // Skip lines with insufficient data
+                }
+
+                String saleDate = fields[0];
+                String itemCode = fields[1];
+                if (saleDate.equals(targetDate) && itemCode.equals(itemCodeToEdit)) {
+                    // Update the entry
+                    line = targetDate + DELIMITER +
+                            updatedDailySale.getItemCode() + DELIMITER +
+                            updatedDailySale.getItemName() + DELIMITER +
+                            updatedDailySale.getQuantitySold() + DELIMITER +
+                            String.format("%.2f", updatedDailySale.getSellingPrice()) + DELIMITER +
+                            String.format("%.2f", updatedDailySale.getTax()) + DELIMITER +
+                            String.format("%.2f", updatedDailySale.getTotalPriceOfItem());
+                    entryFound = true;
+                }
+                lines.add(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        if (!entryFound) {
+            return false;
+        }
+
+        // Write the updated lines back to the file
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
+            for (String line : lines) {
+                writer.write(line);
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
+    }
+
+
 }

@@ -59,6 +59,10 @@ public class DailySales implements Entry {
         return this.totalAmount;
     }
 
+    public void setTax(double tax) {
+        this.tax = tax;
+    }
+
     public void setDateOfSale(Date dateOfSale) {
         this.dateOfSale = dateOfSale;
     }
@@ -198,13 +202,143 @@ public class DailySales implements Entry {
 
     @Override
     public void edit() {
+        DailySalesDAO dailySalesDAO = new DailySalesDAO();
+        ItemDAO itemDAO = new ItemDAO();
 
+        System.out.print("Enter the date of the sale you want to edit: ");
+        Date dateToEdit = Utility.readDate();
+
+        List<DailySales> salesOnDate = dailySalesDAO.getSalesByDate(dateToEdit);
+
+        if (salesOnDate.isEmpty()) {
+            System.out.println("No sales entries found for this date.");
+            return;
+        }
+
+        // Display sales entries on that date
+        dailySalesDAO.printSalesByDate(dateToEdit);
+
+        System.out.print("\nEnter the Item Code of the sale you want to edit: ");
+        String itemCodeToEdit = Utility.readString(10);
+
+        DailySales dailySaleToEdit = null;
+        for (DailySales sale : salesOnDate) {
+            if (sale.getItemCode().equals(itemCodeToEdit)) {
+                dailySaleToEdit = sale;
+                break;
+            }
+        }
+
+        if (dailySaleToEdit == null) {
+            System.out.println("No sales entry found for the given Item Code on this date.");
+            return;
+        }
+
+        // Re-prompt for new quantity sold
+        System.out.print("Current Quantity Sold: " + dailySaleToEdit.getQuantitySold() + ". Press Enter to keep: ");
+        int newQuantitySold = Utility.readInt(dailySaleToEdit.getQuantitySold());
+
+        System.out.print("Current Selling Price: " + dailySaleToEdit.getSellingPrice() + ". Press Enter to keep: ");
+        double newSellingPrice = Utility.readDouble(dailySaleToEdit.getSellingPrice());
+        double newTax = newSellingPrice * 0.06 * newQuantitySold;
+        double newTotalPriceOfItem = (newSellingPrice * newQuantitySold) + newTax;
+
+        System.out.print("Are you sure you want to edit this sales entry? ");
+        char confirm = Utility.readConfirmSelection();
+
+        if (confirm == 'Y' || confirm == 'y') {
+            // Fetch the corresponding Item object to update its stock
+            Item itemToUpdate = itemDAO.getItemByItemCode(itemCodeToEdit);
+            int stockDifference = newQuantitySold - dailySaleToEdit.getQuantitySold();
+            itemToUpdate.setQuantity(itemToUpdate.getQuantity() - stockDifference);
+
+            // Update the item's stock and isInStock status in the ItemDAO
+            itemDAO.editItem(itemCodeToEdit, itemToUpdate);
+
+            // Update isInStock status
+            boolean newIsInStock = itemToUpdate.getQuantity() > itemToUpdate.getMinStockLevel();
+            itemDAO.updateIsInStock(itemCodeToEdit, newIsInStock);
+
+            // Update the DailySales entry with new data
+            dailySaleToEdit.setQuantitySold(newQuantitySold);
+            dailySaleToEdit.setSellingPrice(newSellingPrice); // Updating Selling Price
+            dailySaleToEdit.setTax(newTax); // Updating Tax
+            dailySaleToEdit.setTotalPriceOfItem(newTotalPriceOfItem);
+            dailySaleToEdit.setTotalAmount(newTotalPriceOfItem); // Assuming total amount is same as total price of item
+
+            // Update the DailySales entry in the txt file
+            if (dailySalesDAO.editDailySales(dateToEdit, itemCodeToEdit, dailySaleToEdit)) {
+                System.out.println("Sales entry successfully edited.");
+            } else {
+                System.out.println("Failed to edit sales entry.");
+            }
+        } else {
+            System.out.println("Sales entry edit cancelled.");
+        }
     }
+
 
     @Override
     public void delete() {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
+        System.out.print("Enter the date of the sales entry you want to delete: ");
+        Date date = Utility.readDate();
+
+        DailySalesDAO dailySalesDAO = new DailySalesDAO();
+        List<DailySales> salesList = dailySalesDAO.getSalesByDate(date);
+
+        if (salesList.isEmpty()) {
+            System.out.println("No sales entries found for the given date.");
+            return;
+        }
+
+        // Display the sales entries for the given date
+        dailySalesDAO.printSalesByDate(date);
+
+        System.out.print("\n\nEnter the Item Code of the sales entry to delete: ");
+        String itemCode = Utility.readString(10);
+
+        DailySales deletedEntry = null;
+        for (DailySales ds : salesList) {
+            if (ds.getItemCode().equals(itemCode)) {
+                deletedEntry = ds;
+                break;
+            }
+        }
+
+        if (deletedEntry == null) {
+            System.out.println("Sales entry with the given Item Code not found.");
+            return;
+        }
+
+        System.out.print("Are you sure you want to delete this entry? ");
+        char confirm = Utility.readConfirmSelection();
+
+        if (confirm == 'Y' || confirm == 'y') {
+            if (dailySalesDAO.deleteSalesEntry(date, itemCode)) {
+                System.out.println("Sales entry successfully deleted.");
+
+                // Update the stock and isInStock status
+                ItemDAO itemDAO = new ItemDAO();
+                Item item = itemDAO.getItemByItemCode(itemCode);
+
+                item.setQuantity(item.getQuantity() + deletedEntry.getQuantitySold());
+
+                itemDAO.editItem(itemCode, item);
+
+                boolean newIsInStock = item.getQuantity() > item.getMinStockLevel();
+                itemDAO.updateIsInStock(itemCode, newIsInStock);
+
+            } else {
+                System.out.println("Failed to delete the sales entry.");
+            }
+        } else {
+            System.out.println("Sales entry not deleted.");
+        }
     }
+
+
 
     @Override
     public void view() {

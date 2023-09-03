@@ -96,7 +96,7 @@ public class View {
 
     public void DailySalesEntryMenu() {
         char choice;
-        DailySales dailySales = new DailySales();  // Assuming you have a DailySales class that implements add, delete, edit, and view methods
+        DailySales dailySales = new DailySales();
         do {
             System.out.println("\n\t\t\t1. Add Daily Sales Entry");
             System.out.println("\t\t\t2. Delete Daily Sales Entry");
@@ -106,13 +106,13 @@ public class View {
             System.out.println("\t\t\t6. Back");
 
             System.out.print("Please enter your choice: ");
-            choice = Utility.readChar();  // Assuming you have a Utility class that can read a character
+            choice = Utility.readChar();
 
             switch (choice) {
                 case '1' -> dailySales.add();
                 case '2' -> dailySales.delete();
                 case '3' -> dailySales.edit();
-                case '4' -> dailySales.searchByDate();  // Assuming this method exists
+                case '4' -> dailySales.searchByDate();
                 case '5' -> dailySales.view();
                 case '6' -> {
                     System.out.println("Exiting daily sales entry menu.");
