@@ -129,7 +129,7 @@ public class ItemDAO {
                     continue; // Skip lines with insufficient data
                 }
 
-                String existingItemName = fields[1]; // Assuming the name is the second field
+                String existingItemName = fields[1];
 
                 if (existingItemName.equalsIgnoreCase(itemName)) {
                     // Print item details
@@ -272,8 +272,65 @@ public class ItemDAO {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return null; // Return null if item not found
+        return null;
     }
+
+    public int countItems() {
+        int count = 0;
+        try (BufferedReader reader = new BufferedReader(new FileReader("Item.txt"))) {
+            while (reader.readLine() != null) {
+                count++;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return count;
+    }
+
+    public boolean updateIsInStock(String itemCode, boolean newIsInStock) {
+        ArrayList<String> lines = new ArrayList<>();
+        boolean itemFound = false;
+
+        // Read existing file
+        try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split("\\" + DELIMITER);
+                if (parts.length < 9) {
+                    continue; // skip lines with insufficient data
+                }
+
+                if (parts[0].equals(itemCode)) {
+                    // Update the isInStock status at index 7
+                    parts[7] = String.valueOf(newIsInStock);
+                    line = String.join(DELIMITER, parts);
+                    itemFound = true;
+                }
+                lines.add(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        if (!itemFound) {
+            return false;
+        }
+
+        // Write updated lines back to the file
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
+            for (String line : lines) {
+                writer.write(line);
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
+    }
+
 
 
 }

@@ -227,6 +227,20 @@ public class Utility {
         return n;
     }
 
+    public static double readDouble(double defaultValue) {
+        while (true) {
+            String input = scanner.nextLine().trim();
+            if (input.isEmpty()) {
+                return defaultValue;
+            }
+            try {
+                return Double.parseDouble(input);
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a valid number or press Enter to use the default value.");
+            }
+        }
+    }
+
     public static String readContactNumber() {
         String contactNumber;
         for (; ; ) {
@@ -259,6 +273,60 @@ public class Utility {
             }
         }
         return email;
+    }
+
+    public static String readContactNumber(String existingValue) {
+        String contactNumber;
+        for (; ; ) {
+            System.out.print("Enter Contact Number: ");
+            contactNumber = readString(11, existingValue); // Max length 11 to accommodate 10 or 11 digit numbers
+            if (contactNumber.length() == 10 || contactNumber.length() == 11) {
+                try {
+                    Long.parseLong(contactNumber); // Check if it's a valid number
+                    break;
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid number. Please enter a 10 or 11-digit contact number.");
+                }
+            } else {
+                System.out.println("Invalid length. Please enter a 10 or 11-digit contact number.");
+            }
+        }
+        return contactNumber;
+    }
+
+    public static String readEmail(String existingValue) {
+        String email;
+        for (; ; ) {
+            System.out.print("Enter Email: ");
+            email = readString(50, existingValue); // Max length 50 for email
+            if (email.contains("@") && email.contains(".")) {
+                // Add more validation if needed
+                break;
+            } else {
+                System.out.println("Invalid email format. Please include '@' and '.'");
+            }
+        }
+        return email;
+    }
+
+    public static Date readDate(Date existingValue) {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        sdf.setLenient(false); // this will not enable 25/13/2021 as valid input
+        Date date = null;
+        boolean validInput = false;
+
+        while (!validInput) {
+            System.out.print("Please enter the date in dd/MM/yyyy format: ");
+            String dateString = readString(10, sdf.format(existingValue)); // Reading as string
+            try {
+                date = sdf.parse(dateString);
+                validInput = true; // exit the loop if parsing is successful
+            } catch (ParseException e) {
+                System.out.print("Invalid date format. Please try again. ");
+            }
+        }
+
+        return date;
     }
 
 }

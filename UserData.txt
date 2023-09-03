@@ -1,4 +1,4 @@
-ABC123/221111/MALE/20/SM/Pending/
+ABC123/221111/MALE/20/SM/Reject/
 Aqedwc/123ws/MALE/20/SM/Pending/
 Aawv/2qerww/MALE/20/SM/Reject/
 html123/222111/MALE/21/SM/Approve/

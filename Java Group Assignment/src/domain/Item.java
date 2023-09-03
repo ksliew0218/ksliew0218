@@ -3,7 +3,6 @@ package domain;
 import data.ItemDAO;
 import data.SupplierDAO;
 import utility.Utility;
-import view.View;
 
 import java.util.Date;
 import java.util.List;
@@ -165,6 +164,7 @@ public class Item implements Entry {
 
     public void edit() {
         ItemDAO itemDAO = new ItemDAO();
+        SupplierDAO supplierDAO = new SupplierDAO(); // To check for Supplier ID existence
 
         // Display the items to the user so they can pick which one to edit
         itemDAO.viewAllItems();
@@ -173,53 +173,53 @@ public class Item implements Entry {
         String itemCodeToEdit = Utility.readString(10);
 
         if (!itemDAO.checkDuplicateItemCode(itemCodeToEdit)) {
-            System.out.println("Item Code does not exist.");
+            System.out.print("Item Code does not exist.");
             return;
         }
 
         Item itemToEdit = itemDAO.getItemByItemCode(itemCodeToEdit);
+
         // Re-prompt for each attribute and show its current value
-        System.out.println("Current Item Name: " + itemToEdit.getItemName());
-        System.out.print("Enter New Item Name: ");
-        String newItemName = Utility.readString(50);
+        System.out.print("Current Item Name: " + itemToEdit.getItemName() + ". Press Enter to keep: ");
+        String newItemName = Utility.readString(50, itemToEdit.getItemName());
 
-        System.out.println("Current Quantity: " + itemToEdit.getQuantity());
-        System.out.print("Enter New Quantity: ");
-        int newQuantity = Utility.readInt();
+        System.out.print("Current Quantity: " + itemToEdit.getQuantity() + ". Press Enter to keep: ");
+        int newQuantity = Utility.readInt(itemToEdit.getQuantity());
 
-        System.out.println("Current Unit Price: " + itemToEdit.getUnitPrice());
-        System.out.print("Enter New Unit Price: ");
-        double newUnitPrice = Utility.readDouble();
+        System.out.print("Current Unit Price: " + itemToEdit.getUnitPrice() + ". Press Enter to keep: ");
+        double newUnitPrice = Utility.readDouble(itemToEdit.getUnitPrice());
 
-        System.out.println("Current Supplier ID: " + itemToEdit.getSupplierId());
-        System.out.print("Enter New Supplier ID: ");
-        String newSupplierId = Utility.readString(10);
+        // Check if the Supplier ID exists before accepting it
+        String newSupplierId;
+        do {
+            System.out.print("Current Supplier ID: " + itemToEdit.getSupplierId() + ". Press Enter to keep: ");
+            newSupplierId = Utility.readString(10, itemToEdit.getSupplierId());
+            if (!supplierDAO.checkExistingSupplierID(newSupplierId)) {
+                System.out.print("This Supplier ID does not exist. Please try again.");
+            }
+        } while (!supplierDAO.checkExistingSupplierID(newSupplierId));
 
-        System.out.println("Current Category: " + itemToEdit.getCategory());
-        System.out.print("Enter New Category: ");
-        String newCategory = Utility.readString(20);
+        System.out.print("Current Category: " + itemToEdit.getCategory() + ". Press Enter to keep: ");
+        String newCategory = Utility.readString(20, itemToEdit.getCategory());
 
-        System.out.println("Current Expiry Date: " + itemToEdit.getExpiryDate());
-        System.out.print("Enter New Expiry Date: ");
-        Date newExpiryDate = Utility.readDate();
+        System.out.print("Current Expiry Date: " + itemToEdit.getExpiryDate() + ". Press Enter to keep: ");
+        Date newExpiryDate = Utility.readDate(itemToEdit.getExpiryDate());
 
-        System.out.println("Current Availability: " + itemToEdit.isInStock());
-        System.out.print("Enter New Availability: ");
-        boolean newisInStock = Utility.readBoolean();
+        System.out.print("Current Minimum Stock Level: " + itemToEdit.getMinStockLevel() + ". Press Enter to keep: ");
+        int newMinStockLevel = Utility.readInt(itemToEdit.getMinStockLevel());
 
-        System.out.println("Current Minimum Stock Level: " + itemToEdit.getMinStockLevel());
-        System.out.print("Enter New Minimum Stock Level: ");
-        int newMinStockLevel = Utility.readInt();
+        // Determine newIsInStock based on newMinStockLevel and newQuantity
+        boolean newIsInStock = newQuantity >= newMinStockLevel;
 
         // After collecting all new values, ask for confirmation
-        System.out.print("Are you sure you want to update this item? (Y/N): ");
+        System.out.print("Are you sure you want to update this item? ");
         char confirm = Utility.readConfirmSelection();
 
         if (confirm == 'Y' || confirm == 'y') {
             // Create a new Item object with the new data
             Item updatedItem = new Item(
                     itemCodeToEdit, newItemName, newQuantity, newUnitPrice,
-                    newSupplierId, newCategory, newExpiryDate, newisInStock,
+                    newSupplierId, newCategory, newExpiryDate, newIsInStock,
                     newMinStockLevel
             );
 
@@ -233,6 +233,7 @@ public class Item implements Entry {
             System.out.println("Item update cancelled.");
         }
     }
+
 
 
 

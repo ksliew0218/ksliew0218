@@ -1,8 +1,6 @@
 package view;
 
 import domain.*;
-import jdk.jshell.execution.Util;
-import java.util.Scanner;
 import utility.Utility;
 
 public class View {
@@ -74,7 +72,9 @@ public class View {
             System.out.println("\t\t\t1. Add Supplier");
             System.out.println("\t\t\t2. Delete Supplier");
             System.out.println("\t\t\t3. Edit Supplier");
-            System.out.println("\t\t\t4. Back");
+            System.out.println("\t\t\t4. Search Supplier by Supplier Name");
+            System.out.println("\t\t\t5. View Supplier Details");
+            System.out.println("\t\t\t6. Back");
 
             System.out.print("Please enter your choice: ");
             choice = Utility.readChar();
@@ -83,7 +83,9 @@ public class View {
                 case '1' -> supplier.add();
                 case '2' -> supplier.delete();
                 case '3' -> supplier.edit();
-                case '4' -> {
+                case '4' -> supplier.searchSupplierByID();
+                case '5' -> supplier.view();
+                case '6' -> {
                     System.out.println("Exiting supplier entry menu.");
                     return;
                 }
@@ -92,5 +94,32 @@ public class View {
         } while (true);
     }
 
+    public void DailySalesEntryMenu() {
+        char choice;
+        DailySales dailySales = new DailySales();  // Assuming you have a DailySales class that implements add, delete, edit, and view methods
+        do {
+            System.out.println("\n\t\t\t1. Add Daily Sales Entry");
+            System.out.println("\t\t\t2. Delete Daily Sales Entry");
+            System.out.println("\t\t\t3. Edit Daily Sales Entry");
+            System.out.println("\t\t\t4. Search Daily Sales Entry by Date");
+            System.out.println("\t\t\t5. View Daily Sales Report");
+            System.out.println("\t\t\t6. Back");
 
+            System.out.print("Please enter your choice: ");
+            choice = Utility.readChar();  // Assuming you have a Utility class that can read a character
+
+            switch (choice) {
+                case '1' -> dailySales.add();
+                case '2' -> dailySales.delete();
+                case '3' -> dailySales.edit();
+                case '4' -> dailySales.searchByDate();  // Assuming this method exists
+                case '5' -> dailySales.view();
+                case '6' -> {
+                    System.out.println("Exiting daily sales entry menu.");
+                    return;
+                }
+                default -> System.out.println("Invalid choice. Please try again.");
+            }
+        } while (true);
+    }
 }
