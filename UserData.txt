@@ -2,8 +2,8 @@ ABC123/221111/MALE/20/SM/Reject/
 Aawv/2qerww/MALE/20/SM/Reject/
 html123/222111/MALE/21/SM/Approve/
 ksliew/ksliew/MALE/20/SM/Approve/
-cincai/cincai/MALE/21/SM/Pending/
-Zuka/111222333/FEMALE/22/PM/Pending/
+cincai/cincai/MALE/21/SM/Reject/
+Zuka/111222333/FEMALE/22/PM/Reject/
 ZUKA/111222111/FEMALE/22/SM/Reject/
 Admin/Admin/MALE/30/AD/Approve/
 Gloria/111222111/FEMALE/20/SM/Pending/

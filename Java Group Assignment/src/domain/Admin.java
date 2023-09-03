@@ -90,6 +90,7 @@ public class Admin {
                             System.out.println("1. Approve");
                             System.out.println("2. Reject");
                             System.out.println("3. Pending");
+                            System.out.print("Please input a number: ");
                             decision = ans.nextLine();
                             if (decision.equals("1"))
                             {
