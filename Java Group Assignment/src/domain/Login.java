@@ -1,5 +1,7 @@
 package domain;
 
+import data.Admin_And_UserIDDOA;
+
 import java.io.*;
 import java.util.*;
 
@@ -62,7 +64,25 @@ public class Login extends User
 
                     else if(UserArr[0].equals(super.UserId)&& UserArr[1].equals(super.UserPass) && UserArr[5].equals("Reject"))
                     {
+                        correctID.add(UserInfo);
+                        try {
+                            FileWriter fileWriter = new FileWriter("TempUser.txt");
+                            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+
+                            for (String value : correctID) {
+                                bufferedWriter.write(value);
+                                bufferedWriter.newLine();
+                            }
+
+                            bufferedWriter.close();
+                            fileWriter.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        correctID.clear();
                         System.out.println("Your application was rejected");
+                        Admin_And_UserIDDOA User = new Admin_And_UserIDDOA();
+                        User.WhyRejectedData();
                     }
                 }
                 if (bool ==1)
@@ -83,6 +103,7 @@ public class Login extends User
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+                    correctID.clear();
                     return 1;
                 }
                 else

@@ -95,7 +95,7 @@ public class Register extends User{
         while (UserPass01 == 0)
         {
             int bool = 0;
-            System.out.print("Enter User Pass");
+            System.out.print("Enter User Pass: ");
             UserPass = Sc3.nextLine();
             for (int i = 0; i < UserPass.length(); i++)
             {
@@ -119,7 +119,7 @@ public class Register extends User{
         while (UserGender01 == 0)
         {
             int bool = 0;
-            System.out.print("Enter User Gender");
+            System.out.print("Enter User Gender: ");
             Usergender = Sc3.nextLine();
             UserGender = Usergender.toUpperCase();
             for (int i = 0; i < UserGender.length(); i++)
@@ -145,7 +145,7 @@ public class Register extends User{
 
         while (UserAge01 == 0)
         {
-            System.out.print("Enter User Age");
+            System.out.print("Enter User Age: ");
             UserAge = Sc3.nextLine();
             Register TI = new Register();
             UserAge01 = TI.tryParseInt(UserAge);
@@ -155,7 +155,7 @@ public class Register extends User{
         {
             System.out.println("1. Sales Manager");
             System.out.println("2. Purchase Manager");
-            System.out.print("Enter a number");
+            System.out.print("Enter a number: ");
             UserRole = Sc3.nextLine();
             if (UserRole.equals("1"))
             {

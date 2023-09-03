@@ -15,12 +15,14 @@ public class VerifyUserRole {
                 if (UserArr[4].equals("SM")) {
                     System.out.println("Sales Manager Menu");
                     Sales_Manager SM = new Sales_Manager();
+                    SM.Sales_Manager_Menu();
                     break;
                 }
                 else if (UserArr[4].equals("PM"))
                 {
                     System.out.println("Project Manager Menu");
                     Project_Manager PM = new Project_Manager();
+                    PM.Project_Manager_Menu();
                     break;
                 }
                 else if (UserArr[4].equals("AD"))
