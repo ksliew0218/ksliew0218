@@ -64,16 +64,22 @@ public class Aprove_Or_Reject_UserRole {
                         {
                             UserArr[5] = "Approve";
                             System.out.println("Sucess to update!");
+                            System.out.println("User ID: " + UserArr[0] + "\t" + "User Gender: " + UserArr[2]+ "\t" + "User Age: " + UserArr[3] + "\t" +"User Age: " + UserArr[3] +
+                                    "\t" + "User Role: " + UserArr[4] + "\t" + "Status: " + UserArr[5]);
                         }
                         else if (decision.equals("2"))
                         {
                             UserArr[5] = "Reject";
                             System.out.println("Sucess to update!");
+                            System.out.println("User ID: " + UserArr[0] + "\t" + "User Gender: " + UserArr[2]+ "\t" + "User Age: " + UserArr[3] + "\t" +"User Age: " + UserArr[3] +
+                                    "\t" + "User Role: " + UserArr[4] + "\t" + "Status: " + UserArr[5]);
                         }
                         else if (decision.equals("3"))
                         {
                             UserArr[5] = "Pending";
                             System.out.println("Sucess to update!");
+                            System.out.println("User ID: " + UserArr[0] + "\t" + "User Gender: " + UserArr[2]+ "\t" + "User Age: " + UserArr[3] + "\t" +"User Age: " + UserArr[3] +
+                                    "\t" + "User Role: " + UserArr[4] + "\t" + "Status: " + UserArr[5]);
                         }
                         updatedStatus.add(UserArr[0]);
                         updatedStatus.add("/");

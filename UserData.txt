@@ -3,7 +3,7 @@ Aqedwc/123ws/MALE/20/SM/Pending/
 Aawv/2qerww/MALE/20/SM/Reject/
 html123/222111/MALE/21/SM/Approve/
 ksliew/ksliew/MALE/20/SM/Approve/
-cincai/cincai/MALE/21/SM/Pending/
+cincai/cincai/MALE/21/SM/Reject/
 Zuka/111222333/FEMALE/22/PM/Approve/
 ZUKA/111222111/FEMALE/22/SM/Approve/
 Admin/Admin/MALE/30/AD/Approve/
