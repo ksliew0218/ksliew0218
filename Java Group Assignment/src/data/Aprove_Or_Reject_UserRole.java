@@ -17,11 +17,8 @@ public class Aprove_Or_Reject_UserRole {
 
                     if (UserArr[5].equals("Pending"))
                     {
-                        System.out.println("User ID: " + UserArr[0]);
-                        System.out.println("User Gender: " + UserArr[2]);
-                        System.out.println("User Age: " + UserArr[3]);
-                        System.out.println("User Role: " + UserArr[4]);
-                        System.out.println("Status: " + UserArr[5]);
+                        System.out.println("User ID: " + UserArr[0] + "\t" + "User Gender: " + UserArr[2]+ "\t" + "User Age: " + UserArr[3] + "\t" +"User Age: " + UserArr[3] +
+                                "\t" + "User Role: " + UserArr[4] + "\t" + "Status: " + UserArr[5]);
                     }
                 }
                 myData.close();
@@ -57,11 +54,8 @@ public class Aprove_Or_Reject_UserRole {
 
                     if (UserArr[0].equals(search) && UserArr[5].equals("Pending"))
                     {
-                        System.out.println("User ID: " + UserArr[0]);
-                        System.out.println("User Gender: " + UserArr[2]);
-                        System.out.println("User Age: " + UserArr[3]);
-                        System.out.println("User Role: " + UserArr[4]);
-                        System.out.println("Status: " + UserArr[5]);
+                        System.out.println("User ID: " + UserArr[0] + "\t" + "User Gender: " + UserArr[2]+ "\t" + "User Age: " + UserArr[3] + "\t" +"User Age: " + UserArr[3] +
+                                "\t" + "User Role: " + UserArr[4] + "\t" + "Status: " + UserArr[5]);
                         System.out.println("1. Approve");
                         System.out.println("2. Reject");
                         System.out.println("3. Pending");
@@ -69,14 +63,17 @@ public class Aprove_Or_Reject_UserRole {
                         if (decision.equals("1"))
                         {
                             UserArr[5] = "Approve";
+                            System.out.println("Sucess to update!");
                         }
                         else if (decision.equals("2"))
                         {
                             UserArr[5] = "Reject";
+                            System.out.println("Sucess to update!");
                         }
                         else if (decision.equals("3"))
                         {
                             UserArr[5] = "Pending";
+                            System.out.println("Sucess to update!");
                         }
                         updatedStatus.add(UserArr[0]);
                         updatedStatus.add("/");
@@ -113,7 +110,6 @@ public class Aprove_Or_Reject_UserRole {
                 FileWriter FW = new FileWriter("UserData.txt");
                 for (String value: updatedStatus)
                 {
-                    System.out.print(value);
                     FW.write(value);
                 }
                 FW.close();
@@ -126,6 +122,7 @@ public class Aprove_Or_Reject_UserRole {
         {
             System.out.println("File Error");
         }
+            exit = false;
         }while(exit != false);
     }
 }
