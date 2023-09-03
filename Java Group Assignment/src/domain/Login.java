@@ -17,9 +17,9 @@ public class Login extends User
         String User_ID;
         String Password;
         Scanner input = new Scanner(System.in);
-        System.out.println("Please input your user id:");
+        System.out.print("Please input your user id:");
         User_ID = input.nextLine();
-        System.out.println("Please input your password");
+        System.out.print("Please input your password:");
         Password = input.nextLine();
         Login L = new Login(User_ID,Password);
         if (L.Login_Detail() == 1)
@@ -45,7 +45,7 @@ public class Login extends User
                     String UserInfo = Sc2.nextLine();
                     String[] UserArr = UserInfo.split("/");
 
-                    if (UserArr[0].equals(super.UserId)&& UserArr[1].equals(super.UserPass))
+                    if (UserArr[0].equals(super.UserId)&& UserArr[1].equals(super.UserPass) && UserArr[5].equals("Approve"))
                     {
                         System.out.println("User Id Exist");
                         System.out.println("User Id =" + UserArr[0]);
@@ -54,6 +54,15 @@ public class Login extends User
                         System.out.println("User Role =" + UserArr[4]);
                         correctID.add(UserInfo);
                         bool = 1;
+                    }
+                    else if(UserArr[0].equals(super.UserId)&& UserArr[1].equals(super.UserPass) && UserArr[5].equals("Pending"))
+                    {
+                        System.out.println("Your application is still pending");
+                    }
+
+                    else if(UserArr[0].equals(super.UserId)&& UserArr[1].equals(super.UserPass) && UserArr[5].equals("Reject"))
+                    {
+                        System.out.println("Your application was rejected");
                     }
                 }
                 if (bool ==1)
