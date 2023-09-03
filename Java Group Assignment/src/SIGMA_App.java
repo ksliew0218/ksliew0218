@@ -1,6 +1,4 @@
 
-import data.Aprove_Or_Reject_UserRole;
-import domain.VerifyUserRole;
 import view.View;
 
 public class SIGMA_App {
