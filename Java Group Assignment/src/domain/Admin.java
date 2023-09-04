@@ -14,40 +14,6 @@ import java.time.format.*;
 public class Admin {
     public Admin()
     {}
-    public void admin_menu()
-    {
-        int exit = 0;
-        do
-        {
-            System.out.println("1. Check all applicant information");
-            System.out.println("2. Search User");
-            System.out.println("3. Approve Or Reject Applicant");
-            System.out.println("4. Check the reason for reject the applicant");
-            System.out.println("5. Exit");
-            System.out.print("Enter a number:");
-            Scanner input_admin = new Scanner(System.in);
-            char menu_admin;
-            menu_admin = Utility.readChar();
-            switch (menu_admin)
-            {
-                case '1':
-                    readfile();
-                    break;
-                case '2':
-                    search_user_id();
-                    break;
-                case '3':
-                    search_and_decision();
-                    break;
-                case '4':
-                    Reject_reason_history();
-                    break;
-                case '5':
-                    exit = 1;
-                    break;
-            }
-        } while(exit != 1);
-    }
 
     public void Reject_reason_history()
     {

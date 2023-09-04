@@ -7,10 +7,10 @@ public class View {
     public void mainMenu() {
         char choice;
         do {
-            System.out.println("Welcome to Menu");
-            System.out.println("1. Login");
-            System.out.println("2. Register");
-            System.out.println("3. Exit");
+            System.out.println("Welcome to SIGMA SDN BHD (SSB)");
+            System.out.println("\t\t\t1. Login");
+            System.out.println("\t\t\t2. Register");
+            System.out.println("\t\t\t3. Exit");
             System.out.print("Please Select a number: ");
             choice = Utility.readChar();
 

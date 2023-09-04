@@ -1,12 +1,12 @@
 
 import data.Admin_And_UserIDDOA;
+import data.DailySalesDAO;
+import domain.DailySales;
 import view.View;
 
 public class SIGMA_App {
     public static void main(String[] args)
     {
-        View V = new View();
-        V.mainMenu();
-        //new View().ItemEntryMenu();
+        new View().mainMenu();
     }
 }
