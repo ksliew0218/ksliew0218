@@ -265,5 +265,19 @@ public class SupplierDAO {
         return null;
     }
 
+    public List<String> getAllSuppliers() {
+        List<String> suppliers = new ArrayList<>();
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader("path_to_supplier.txt"));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                suppliers.add(line);
+            }
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return suppliers;
+    }
 }
 
