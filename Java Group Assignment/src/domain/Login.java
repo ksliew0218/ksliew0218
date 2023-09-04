@@ -51,11 +51,7 @@ public class Login extends User
                     if (UserArr[0].equals(super.UserId)&& UserArr[1].equals(super.UserPass) && UserArr[5].equals("Approve"))
                     {
                         loggedInUsername = UserArr[0];
-                        System.out.println("User Id Exist");
-                        System.out.println("User Id =" + UserArr[0]);
-                        System.out.println("User Gender =" + UserArr[2]);
-                        System.out.println("User Age =" + UserArr[3]);
-                        System.out.println("User Role =" + UserArr[4]);
+                        System.out.println("Correct!");
                         correctID.add(UserInfo);
                         bool = 1;
                     }

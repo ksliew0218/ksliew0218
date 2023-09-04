@@ -15,21 +15,21 @@ public class VerifyUserRole {
                 String UserInfo = Sc2.nextLine();
                 String[] UserArr = UserInfo.split("/");
                 if (UserArr[4].equals("SM")) {
-                    System.out.println("Sales Manager Menu");
+                    System.out.println("Welcome to Sales Manager Menu");
                     View SM = new View();
                     SM.Sales_Manager_Menu();
                     break;
                 }
                 else if (UserArr[4].equals("PM"))
                 {
-                    System.out.println("Project Manager Menu");
+                    System.out.println("Welcome to Project Manager Menu");
                     View PM = new View();
                     PM.Project_Manager_Menu();
                     break;
                 }
                 else if (UserArr[4].equals("AD"))
                 {
-                    System.out.println("Admin Menu");
+                    System.out.println("Welcome to Admin Menu");
                     View AD = new View();
                     AD.admin_menu();
                     break;
