@@ -1,4 +1,6 @@
 package domain;
+import view.View;
+
 import java.io.*;
 import java.util.*;
 
@@ -14,21 +16,21 @@ public class VerifyUserRole {
                 String[] UserArr = UserInfo.split("/");
                 if (UserArr[4].equals("SM")) {
                     System.out.println("Sales Manager Menu");
-                    Sales_Manager SM = new Sales_Manager();
+                    View SM = new View();
                     SM.Sales_Manager_Menu();
                     break;
                 }
                 else if (UserArr[4].equals("PM"))
                 {
                     System.out.println("Project Manager Menu");
-                    Project_Manager PM = new Project_Manager();
+                    View PM = new View();
                     PM.Project_Manager_Menu();
                     break;
                 }
                 else if (UserArr[4].equals("AD"))
                 {
                     System.out.println("Admin Menu");
-                    Admin AD = new Admin();
+                    View AD = new View();
                     AD.admin_menu();
                     break;
                 }
