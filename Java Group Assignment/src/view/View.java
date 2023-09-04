@@ -86,7 +86,7 @@ public class View {
                 case '1' -> supplier.add();
                 case '2' -> supplier.delete();
                 case '3' -> supplier.edit();
-                case '4' -> supplier.searchSupplierByID();
+                //case '4' -> supplier.searchSupplierByID();
                 case '5' -> supplier.view();
                 case '6' -> {
                     System.out.println("Exiting supplier entry menu.");
@@ -159,6 +159,7 @@ public class View {
         int exit = 0;
         do
         {
+            System.out.println("0. Personal Information");
             System.out.println("1. Check all applicant information");
             System.out.println("2. Search User");
             System.out.println("3. Approve Or Reject Applicant");
@@ -170,6 +171,10 @@ public class View {
             menu_admin = Utility.readChar();
             switch (menu_admin)
             {
+                case '0':
+                    Utility PI = new Utility();
+                    PI.PersonalInfo();
+                    break;
                 case '1':
                     ad.readfile();
                     break;
@@ -195,6 +200,7 @@ public class View {
         do
         {
             System.out.println(
+                    "0. Personal Information" + "\n" +
                     "1. Item Entry (Add/Save/Delete/Edit)" + "\n" +
                             "2. Supplier Entry (Add/Save/Delete/Edit)" + "\n" +
                             "3. Daily Item-wise Sales Entry (Add/Save/Delete/Edit)" + "\n" +
@@ -208,6 +214,10 @@ public class View {
             menu_sales_manahger = Utility.readChar();
             switch (menu_sales_manahger)
             {
+                case '0':
+                    Utility PI = new Utility();
+                    PI.PersonalInfo();
+                    break;
                 case '1':
                     break;
                 case '2':
@@ -236,6 +246,7 @@ public class View {
         do
         {
             System.out.println(
+                    "0. Personal Information" + "\n" +
                     "1. List of Items (View)" + "\n" +
                             "2. List of Suppliers (View)" + "\n" +
                             "3. Display Requisition (View)" + "\n" +
@@ -248,6 +259,10 @@ public class View {
             menu_sales_manahger = Utility.readChar();
             switch (menu_sales_manahger)
             {
+                case '0':
+                    Utility PI = new Utility();
+                    PI.PersonalInfo();
+                    break;
                 case '1':
                     break;
                 case '2':
