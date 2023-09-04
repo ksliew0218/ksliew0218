@@ -13,6 +13,7 @@ public class Login extends User
     }
 
     public Login (){}
+    private static String loggedInUsername;
 
     public void Login_input()
     {
@@ -49,6 +50,7 @@ public class Login extends User
 
                     if (UserArr[0].equals(super.UserId)&& UserArr[1].equals(super.UserPass) && UserArr[5].equals("Approve"))
                     {
+                        loggedInUsername = UserArr[0];
                         System.out.println("User Id Exist");
                         System.out.println("User Id =" + UserArr[0]);
                         System.out.println("User Gender =" + UserArr[2]);
@@ -119,6 +121,9 @@ public class Login extends User
             System.out.println("File Error");
         }
         return 0;
+    }
+    public static String getLoggedInUsername() {
+        return loggedInUsername;
     }
 }
 

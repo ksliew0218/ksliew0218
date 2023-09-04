@@ -1,5 +1,6 @@
 package view;
 
+import data.PurchaseRequisitionDAO;
 import domain.*;
 import utility.Utility;
 
@@ -7,10 +8,10 @@ public class View {
     public void mainMenu() {
         char choice;
         do {
-            System.out.println("Welcome to Menu");
-            System.out.println("1. Login");
-            System.out.println("2. Register");
-            System.out.println("3. Exit");
+            System.out.println("Welcome to SIGMA SDN BHD (SSB)");
+            System.out.println("\t\t\t1. Login");
+            System.out.println("\t\t\t2. Register");
+            System.out.println("\t\t\t3. Exit");
             System.out.print("Please Select a number: ");
             choice = Utility.readChar();
 
@@ -122,4 +123,31 @@ public class View {
             }
         } while (true);
     }
+
+/*    public void CreatePrMenu() {
+        char choice;
+        PurchaseRequisition pr = new PurchaseRequisition();
+        do {
+            System.out.println("\n\t\t\t1. Manually Create New Purchase Requisition");
+            System.out.println("\t\t\t2. Auto-Generate Purchase Requisition");
+            System.out.println("\t\t\t3. Display All Purchase Requisitions");
+            System.out.println("\t\t\t4. Search Daily Sales Entry by Date");
+            System.out.println("\t\t\t5. Back");
+
+            System.out.print("Please enter your choice: ");
+            choice = Utility.readChar();
+
+            switch (choice) {
+                case '1' -> pr.add();
+                case '2' -> pr.delete();
+                case '3' -> pr.edit();
+                case '4' -> pr.searchByDate();
+                case '5' -> {
+                    System.out.println("Exiting purchase requisition menu.");
+                    return;
+                }
+                default -> System.out.println("Invalid choice. Please try again.");
+            }
+        } while (true);
+    }*/
 }
