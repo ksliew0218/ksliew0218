@@ -86,7 +86,7 @@ public class View {
                 case '1' -> supplier.add();
                 case '2' -> supplier.delete();
                 case '3' -> supplier.edit();
-                //case '4' -> supplier.searchSupplierByID();
+                case '4' -> supplier.searchSupplierByID();
                 case '5' -> supplier.view();
                 case '6' -> {
                     System.out.println("Exiting supplier entry menu.");
@@ -201,13 +201,13 @@ public class View {
         {
             System.out.println(
                     "0. Personal Information" + "\n" +
-                    "1. Item Entry (Add/Save/Delete/Edit)" + "\n" +
-                            "2. Supplier Entry (Add/Save/Delete/Edit)" + "\n" +
-                            "3. Daily Item-wise Sales Entry (Add/Save/Delete/Edit)" + "\n" +
-                            "4. Create a Purchase Requisition (Add/Save/Delete/Edit)" + "\n" +
+                    "1. Item Entry (Create/Read/Update/Edit)" + "\n" +
+                            "2. Supplier Entry (Create/Read/Update/Edit)" + "\n" +
+                            "3. Daily Item-wise Sales Entry (Create/Read/Update/Edit)" + "\n" +
+                            "4. Create a Purchase Requisition (Create/Read/Update/Edit)" + "\n" +
                             "5. Display Requisition (View)" + "\n" +
                             "6. List of Purchaser Orders(View)" + "\n" +
-                            "7. Exit" + "\n");
+                            "7. Back" + "\n");
             System.out.print("Please input a number: ");
             Scanner input_admin = new Scanner(System.in);
             char menu_sales_manahger;
@@ -219,10 +219,13 @@ public class View {
                     PI.PersonalInfo();
                     break;
                 case '1':
+                    ItemEntryMenu();
                     break;
                 case '2':
+                    SupplierEntryMenu();
                     break;
                 case '3':
+                    DailySalesEntryMenu();
                     break;
                 case '4':
                     break;
@@ -264,8 +267,10 @@ public class View {
                     PI.PersonalInfo();
                     break;
                 case '1':
+                    new Item().view();
                     break;
                 case '2':
+                    new Supplier().view();
                     break;
                 case '3':
                     break;

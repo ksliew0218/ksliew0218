@@ -1,2 +1,3 @@
 SP002$KFC$1234567890$kfc@gmail.com$12asdasdas$12/02/2020$2
 SP001$Tyson$0123456789$ksliew@.com$123,Jalan ABC$01/01/2023$2
+SP003$First Pride$0987654321$firstpride@mail.com$123,first pride company$01/01/2022$3
