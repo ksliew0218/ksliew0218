@@ -1,5 +1,8 @@
 package utility;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -327,6 +330,27 @@ public class Utility {
         }
 
         return date;
+    }
+
+    public static void PersonalInfo(){
+        try (FileReader myData = new FileReader("TempUser.txt"))
+        {
+            Scanner readInfo = new Scanner(myData);
+            while(readInfo.hasNextLine())
+            {
+                String UserInfo = readInfo.nextLine();
+                String[] UserArr = UserInfo.split("/");
+                System.out.println("UserId: " + UserArr[0]);
+                System.out.println("Gender: " + UserArr[2]);
+                System.out.println("Age:  " + UserArr[3]);
+                System.out.println("Role: " + UserArr[4]);
+            }
+            myData.close();
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

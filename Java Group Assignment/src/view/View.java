@@ -159,6 +159,7 @@ public class View {
         int exit = 0;
         do
         {
+            System.out.println("0. Personal Information");
             System.out.println("1. Check all applicant information");
             System.out.println("2. Search User");
             System.out.println("3. Approve Or Reject Applicant");
@@ -170,6 +171,10 @@ public class View {
             menu_admin = Utility.readChar();
             switch (menu_admin)
             {
+                case '0':
+                    Utility PI = new Utility();
+                    PI.PersonalInfo();
+                    break;
                 case '1':
                     ad.readfile();
                     break;
@@ -195,24 +200,32 @@ public class View {
         do
         {
             System.out.println(
-                    "1. Item Entry (Add/Save/Delete/Edit)" + "\n" +
-                            "2. Supplier Entry (Add/Save/Delete/Edit)" + "\n" +
-                            "3. Daily Item-wise Sales Entry (Add/Save/Delete/Edit)" + "\n" +
-                            "4. Create a Purchase Requisition (Add/Save/Delete/Edit)" + "\n" +
+                    "0. Personal Information" + "\n" +
+                    "1. Item Entry (Create/Read/Update/Edit)" + "\n" +
+                            "2. Supplier Entry (Create/Read/Update/Edit)" + "\n" +
+                            "3. Daily Item-wise Sales Entry (Create/Read/Update/Edit)" + "\n" +
+                            "4. Create a Purchase Requisition (Create/Read/Update/Edit)" + "\n" +
                             "5. Display Requisition (View)" + "\n" +
                             "6. List of Purchaser Orders(View)" + "\n" +
-                            "7. Exit" + "\n");
+                            "7. Back" + "\n");
             System.out.print("Please input a number: ");
             Scanner input_admin = new Scanner(System.in);
             char menu_sales_manahger;
             menu_sales_manahger = Utility.readChar();
             switch (menu_sales_manahger)
             {
+                case '0':
+                    Utility PI = new Utility();
+                    PI.PersonalInfo();
+                    break;
                 case '1':
+                    ItemEntryMenu();
                     break;
                 case '2':
+                    SupplierEntryMenu();
                     break;
                 case '3':
+                    DailySalesEntryMenu();
                     break;
                 case '4':
                     break;
@@ -236,6 +249,7 @@ public class View {
         do
         {
             System.out.println(
+                    "0. Personal Information" + "\n" +
                     "1. List of Items (View)" + "\n" +
                             "2. List of Suppliers (View)" + "\n" +
                             "3. Display Requisition (View)" + "\n" +
@@ -248,9 +262,15 @@ public class View {
             menu_sales_manahger = Utility.readChar();
             switch (menu_sales_manahger)
             {
+                case '0':
+                    Utility PI = new Utility();
+                    PI.PersonalInfo();
+                    break;
                 case '1':
+                    new Item().view();
                     break;
                 case '2':
+                    new Supplier().view();
                     break;
                 case '3':
                     break;
