@@ -87,7 +87,7 @@ public class DailySalesDAO {
         double totalAmount = 0.0;
 
         System.out.format("%-15s %-15s %-15s %-15s %-15s %-15s %-15s\n",
-                "Date", "Item Code", "Item Name", "Quantity Sold", "Selling Price", "Tax", "Total Price of Item");
+                "Date", "Item Code", "Item Name", "Quantity Sold", "Selling Price", "Tax (6%)", "Total Price of Item (RM)");
 
         for (DailySales dailySale : salesList) {
             System.out.format("%-15s %-15s %-15s %-15d %-15.2f %-15.2f %-15.2f\n",
@@ -103,7 +103,7 @@ public class DailySalesDAO {
         }
 
         System.out.println("\n\n\n\n\n\n");
-        System.out.format("%-77s %-15.2f", "Total Amount (RM):", totalAmount);
+        System.out.format("%-100s %-15.2f", "Total Amount (RM):", totalAmount);
     }
 
     public void viewAllSales() {

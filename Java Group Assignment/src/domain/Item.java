@@ -140,7 +140,7 @@ public class Item implements Entry {
         System.out.print("Enter Minimum Stock Level: ");
         this.minStockLevel = Utility.readInt();
 
-        this.isInStock = this.quantity >= this.minStockLevel;
+        this.isInStock = this.quantity > this.minStockLevel;
 
         // Confirm addition
         System.out.println("\nAre you sure you want to save?");

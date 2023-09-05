@@ -11,7 +11,7 @@ public class View {
         char choice;
         do {
             System.out.println("Welcome to SIGMA SDN BHD (SSB)");
-            System.out.println("\t\t\t1. Login");
+            System.out.println("\n\t\t\t1. Login");
             System.out.println("\t\t\t2. Register");
             System.out.println("\t\t\t3. Exit");
             System.out.print("Please Select a number: ");
@@ -41,7 +41,7 @@ public class View {
         char choice;
         Item item = new Item();
         do {
-            System.out.println("\t\t\t1. Add item");
+            System.out.println("\n\t\t\t1. Add item");
             System.out.println("\t\t\t2. Delete item");
             System.out.println("\t\t\t3. Edit item");
             System.out.println("\t\t\t4. Search item by Name");
@@ -72,7 +72,7 @@ public class View {
         char choice;
         Supplier supplier = new Supplier();
         do {
-            System.out.println("\t\t\t1. Add Supplier");
+            System.out.println("\n\t\t\t1. Add Supplier");
             System.out.println("\t\t\t2. Delete Supplier");
             System.out.println("\t\t\t3. Edit Supplier");
             System.out.println("\t\t\t4. Search Supplier by Supplier Name");
@@ -159,7 +159,7 @@ public class View {
         int exit = 0;
         do
         {
-            System.out.println("0. Personal Information");
+            System.out.println("\n0. Personal Information");
             System.out.println("1. Check all applicant information");
             System.out.println("2. Search User");
             System.out.println("3. Approve Or Reject Applicant");
@@ -200,14 +200,17 @@ public class View {
         do
         {
             System.out.println(
-                    "0. Personal Information" + "\n" +
-                    "1. Item Entry (Create/Read/Update/Edit)" + "\n" +
-                            "2. Supplier Entry (Create/Read/Update/Edit)" + "\n" +
-                            "3. Daily Item-wise Sales Entry (Create/Read/Update/Edit)" + "\n" +
-                            "4. Create a Purchase Requisition (Create/Read/Update/Edit)" + "\n" +
-                            "5. Display Requisition (View)" + "\n" +
-                            "6. List of Purchaser Orders(View)" + "\n" +
-                            "7. Back" + "\n");
+                    """
+
+                            0. Personal Information
+                            1. Item Entry (Create/Read/Update/Edit)
+                            2. Supplier Entry (Create/Read/Update/Edit)
+                            3. Daily Item-wise Sales Entry (Create/Read/Update/Edit)
+                            4. Create a Purchase Requisition (Create/Read/Update/Edit)
+                            5. Display Requisition (View)
+                            6. List of Purchaser Orders(View)
+                            7. Back
+                            """);
             System.out.print("Please input a number: ");
             Scanner input_admin = new Scanner(System.in);
             char menu_sales_manahger;
@@ -249,13 +252,16 @@ public class View {
         do
         {
             System.out.println(
-                    "0. Personal Information" + "\n" +
-                    "1. List of Items (View)" + "\n" +
-                            "2. List of Suppliers (View)" + "\n" +
-                            "3. Display Requisition (View)" + "\n" +
-                            "4. Generate Purchase Order (Add/Save/Delete/Edit)" + "\n" +
-                            "5. List of Purchaser Orders (View)" + "\n" +
-                            "6. Exit" + "\n");
+                    """
+
+                            0. Personal Information
+                            1. List of Items (View)
+                            2. List of Suppliers (View)
+                            3. Display Requisition (View)
+                            4. Generate Purchase Order (Add/Save/Delete/Edit)
+                            5. List of Purchaser Orders (View)
+                            6. Exit
+                            """);
             System.out.print("Please select a number: ");
             Scanner input_admin = new Scanner(System.in);
             char menu_sales_manahger;
