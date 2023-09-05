@@ -143,7 +143,10 @@ public class View {
 
             switch (choice) {
                 case '1' -> pr.manualGeneratePR(itemDAO, supplierDAO, prDAO);
-                case '2' -> pr.autoGeneratePR(itemDAO, supplierDAO, prDAO);
+                case '2' -> {
+                    String result = pr.autoGeneratePR(itemDAO, supplierDAO, prDAO);
+                    System.out.println(result);
+                }
                 case '3' -> pr.displayPRList(prDAO);
                 case '4' -> {
                     System.out.println("Exiting purchase requisition menu.");

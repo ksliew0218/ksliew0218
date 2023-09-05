@@ -155,7 +155,7 @@ public class PurchaseRequisition {
                 prDetailsList.add(prDetails);
 
                 // Construct feedback for PM
-                String feedback = "Generated PR for Item: " + itemDetails[1] + " (" + itemDetails[0] + ")" +
+                String feedback = itemDetails[1] + " (" + itemDetails[0] + ")" +
                         " with Supplier: " + supplierDetails[1] + " (" + supplierDetails[0] + ")" +
                         ", Current Stock: " + prDetails.get("CurrentStock") +
                         ", Expected Arrival Day: " + prDetails.get("ExpectedArrivalDays");
@@ -167,7 +167,7 @@ public class PurchaseRequisition {
             prDAO.savePurchaseRequisition(new PurchaseRequisition(prDetails));
         }
 
-        return "Purchase Requisitions have been generated:\n" + String.join("\n", feedbackForPM);
+        return "Purchase Requisitions have been generated:\n" + "Generated PR for Item: \n" + String.join("\n", feedbackForPM);
     }
 
     public String manualGeneratePR(ItemDAO itemDAO, SupplierDAO supplierDAO, PurchaseRequisitionDAO prDAO) {
@@ -197,16 +197,17 @@ public class PurchaseRequisition {
         String creationDate = sdf.format(new Date());
         String prID = "PR" + String.format("%03d", prDAO.getNextAvailablePRID());
 
+
         System.out.println("\n------ Manual Purchase Requisition Generation ------\n");
 
         while (true) {
-            System.out.println("Available items:");
+            System.out.println("Available items:\n");
             for (String item : items) {
                 String[] details = item.split("\\$");
                 System.out.println(details[0] + ": " + details[1] + " (Current Stock: " + details[2] + ")");
             }
 
-            System.out.print("Enter Item Code (or 'exit' to finish): ");
+            System.out.print("\nEnter Item Code (or 'exit' to finish): ");
             String itemCode = scanner.nextLine().trim();
 
             if ("exit".equalsIgnoreCase(itemCode)) {
@@ -275,14 +276,23 @@ public class PurchaseRequisition {
 
     public void displayPRList(PurchaseRequisitionDAO prDAO) {
         List<String> allPRs = prDAO.getAllPRs();
+        List<String> prIDs = new ArrayList<>();
         Map<Integer, String> prMenu = new HashMap<>();
         Scanner scanner = new Scanner(System.in);
+
+        for (String pr : allPRs) {
+            String prID = pr.split("\\$")[0];
+            if (prID != null && !prID.isEmpty() && !prID.equals("null")) {
+                if (!prIDs.contains(prID)) {
+                    prIDs.add(prID);
+                }
+            }
+        }
 
         while (true) {
             System.out.println("\nAvailable PRs:");
             int counter = 1;
-            for (String pr : allPRs) {
-                String prID = pr.split("\\$")[0];
+            for (String prID : prIDs) {
                 System.out.println(counter + ". " + prID);
                 prMenu.put(counter, prID);
                 counter++;
