@@ -5,6 +5,7 @@ import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class PurchaseRequisitionDAO {
     private static final String FILE_PATH = "PRDetails.txt"; // Path to the text file where PR data is stored
@@ -20,6 +21,7 @@ public class PurchaseRequisitionDAO {
                     pr.getProductName(),
                     pr.getCategory(),
                     String.valueOf(pr.getStock()),
+                    String.valueOf(pr.getQuantity()),
                     pr.getSupplierCode(),
                     pr.getSupplierName(),
                     pr.getSupplierContact(),

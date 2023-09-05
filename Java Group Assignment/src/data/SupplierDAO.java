@@ -279,5 +279,22 @@ public class SupplierDAO {
         }
         return suppliers;
     }
+
+    public List<String> getSuppliersForItem(String itemCode) {
+        List<String> suppliersForItem = new ArrayList<>();
+        List<String> allSuppliers = getAllSuppliers();
+
+        for (String supplier : allSuppliers) {
+            String[] details = supplier.split("\\$");
+            if (details[3].equals(itemCode)) {  // Assuming the itemCode is at index 3 in supplier details
+                suppliersForItem.add(supplier);
+            }
+        }
+
+        return suppliersForItem;
+    }
+
+
+
 }
 
