@@ -2,47 +2,50 @@ package domain;
 
 import data.*;
 
-import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
-
-import utility.Utility;
 
 public class PurchaseRequisition {
 
     private String PRID;
     private String itemCode;
-    private int quantity;
-    private String requiredDate;
+    private String productName;
+    private String category;
+    private int stock;
     private String supplierCode;
+    private String supplierName;
+    private String supplierContact;
+    private String CreationDate;
     private String salesManagerID;
+    private String ExpectedArrivalDays;
+    private String poStatus;
+
     private PurchaseRequisitionDAO dao = new PurchaseRequisitionDAO();
 
-    // Constructor
-    public PurchaseRequisition(String salesManagerID) {
+    public PurchaseRequisition() {
         System.out.println("Creating a new Purchase Requisition...");
-        this.PRID = generatePRID();
-
-        System.out.print("Enter item code: ");
-        this.itemCode = Utility.readString(10); // Assuming max length of item code is 10
-
-        System.out.print("Enter quantity: ");
-        this.quantity = Utility.readInt();
-
-        System.out.print("Enter required date (dd/MM/yyyy format): ");
-        this.requiredDate = Utility.readDate().toString(); // Convert Date object to String
-
-        System.out.print("Enter supplier code: ");
-        this.supplierCode = Utility.readString(10); // Assuming max length of supplier code is 10
-
-        this.salesManagerID = salesManagerID;
-
+        this.salesManagerID = Login.getLoggedInUsername(); // 直接从Login类获取当前登录的用户名
         // Save the PR details using DAO
         dao.savePurchaseRequisition(this);
     }
 
-    // Other methods remain the same as the previous version...
-    // generatePRID(), displayPRDetails(), etc.
+    // 修改后的构造函数
+    public PurchaseRequisition(Map<String, String> prDetails) {
+        this.PRID = prDetails.get("PRID");
+        this.itemCode = prDetails.get("ItemCode");
+        this.productName = prDetails.get("ProductName");
+        this.category = prDetails.get("Category");
+        this.stock = Integer.parseInt(prDetails.get("CurrentStock"));
+        this.supplierCode = prDetails.get("SupplierCode");
+        this.supplierName = prDetails.get("SupplierName");
+        this.supplierContact = prDetails.get("SupplierContact");
+        this.salesManagerID = prDetails.get("CreatedBy");
+        this.CreationDate = prDetails.get("CreationDate");
+        this.ExpectedArrivalDays = prDetails.get("ExpectedArrivalDays");
+        this.poStatus = "false";
+    }
+
+
 
     // Getter methods for the attributes so DAO can access them
     public String getPRID() {
@@ -53,29 +56,49 @@ public class PurchaseRequisition {
         return itemCode;
     }
 
-    public int getQuantity() {
-        return quantity;
+    public String getProductName() {
+        return productName;
     }
 
-    public String getRequiredDate() {
-        return requiredDate;
+    public String getCategory() {
+        return category;
+    }
+
+    public int getStock() {
+        return stock;
     }
 
     public String getSupplierCode() {
         return supplierCode;
     }
 
+    public String getSupplierName() {
+        return supplierName;
+    }
+
+    public String getSupplierContact() {
+        return supplierContact;
+    }
+
     public String getSalesManagerID() {
         return salesManagerID;
     }
 
-    // Generate unique PRID
-    private String generatePRID() {
-        // For simplicity, we'll use the current timestamp as a unique PRID
-        return "PR" + new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+    public String getCreationDate() {
+        return CreationDate;
     }
 
-    public String autoGeneratePR(ItemDAO itemDAO, SupplierDAO supplierDAO, PurchaseRequisitionDAO prDAO, String loggedInUsername) {
+    public String getExpectedArrivalDays() {
+        return ExpectedArrivalDays;
+    }
+
+    public String getPOStatus() {
+        return poStatus;
+    }
+
+
+    public String autoGeneratePR(ItemDAO itemDAO, SupplierDAO supplierDAO, PurchaseRequisitionDAO prDAO) {
+        String loggedInUsername = Login.getLoggedInUsername();
         List<String> items = itemDAO.getAllItems();
         List<String> suppliers = supplierDAO.getAllSuppliers();
 
@@ -141,17 +164,20 @@ public class PurchaseRequisition {
         }
 
         for (Map<String, String> prDetails : prDetailsList) {
-            prDAO.savePurchaseRequisition(new PurchaseRequisition(prDetails.toString()));
+            prDAO.savePurchaseRequisition(new PurchaseRequisition(prDetails));
         }
 
         return "Purchase Requisitions have been generated:\n" + String.join("\n", feedbackForPM);
     }
 
-    public String manualGeneratePR(ItemDAO itemDAO, SupplierDAO supplierDAO, PurchaseRequisitionDAO prDAO, String loggedInUsername, Scanner scanner) {
+    public String manualGeneratePR(ItemDAO itemDAO, SupplierDAO supplierDAO, PurchaseRequisitionDAO prDAO) {
+        String loggedInUsername = Login.getLoggedInUsername();
         List<String> items = itemDAO.getAllItems();
         List<String> suppliers = supplierDAO.getAllSuppliers();
         Map<String, String> itemDict = new HashMap<>();
         Map<String, List<String>> supplierDict = new HashMap<>();
+
+        Scanner scanner = new Scanner(System.in);
 
         for (String item : items) {
             String[] itemDetails = item.split("\\$");
@@ -222,7 +248,7 @@ public class PurchaseRequisition {
         }
 
         for (Map<String, String> prDetails : prDetailsList) {
-            prDAO.savePurchaseRequisition(new PurchaseRequisition(prDetails.toString()));
+            prDAO.savePurchaseRequisition(new PurchaseRequisition(prDetails));
         }
 
         System.out.println("\n------ Items Added to PR ------");
@@ -247,9 +273,10 @@ public class PurchaseRequisition {
     }
 
 
-    public void displayPRList(PurchaseRequisitionDAO prDAO, Scanner scanner) {
+    public void displayPRList(PurchaseRequisitionDAO prDAO) {
         List<String> allPRs = prDAO.getAllPRs();
         Map<Integer, String> prMenu = new HashMap<>();
+        Scanner scanner = new Scanner(System.in);
 
         while (true) {
             System.out.println("\nAvailable PRs:");
@@ -302,4 +329,6 @@ public class PurchaseRequisition {
             System.out.println("------------------------------");
         }
     }
+
+
 }

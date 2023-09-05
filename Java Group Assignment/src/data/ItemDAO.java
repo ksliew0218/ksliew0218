@@ -334,7 +334,7 @@ public class ItemDAO {
     public List<String> getAllItems() {
         List<String> items = new ArrayList<>();
         try {
-            BufferedReader reader = new BufferedReader(new FileReader("path_to_item.txt"));
+            BufferedReader reader = new BufferedReader(new FileReader("item.txt"));
             String line;
             while ((line = reader.readLine()) != null) {
                 items.add(line);

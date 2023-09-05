@@ -14,12 +14,19 @@ public class PurchaseRequisitionDAO {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH, true))) {
             // Create a string representation of the PurchaseRequisition object
             String prRecord = String.join(DELIMITER,
+
                     pr.getPRID(),
                     pr.getItemCode(),
-                    String.valueOf(pr.getQuantity()),
-                    pr.getRequiredDate(),
+                    pr.getProductName(),
+                    pr.getCategory(),
+                    String.valueOf(pr.getStock()),
                     pr.getSupplierCode(),
-                    pr.getSalesManagerID()
+                    pr.getSupplierName(),
+                    pr.getSupplierContact(),
+                    pr.getSalesManagerID(),
+                    pr.getCreationDate(),
+                    String.valueOf(pr.getExpectedArrivalDays()),
+                    pr.getPOStatus()
             );
 
             // Write the string representation of the PR to the text file
@@ -67,16 +74,26 @@ public class PurchaseRequisitionDAO {
     }
 
     public int getNextAvailablePRID() {
-        // This is a simplified implementation. You might need to adjust it based on your actual directory structure and file naming convention.
-        File folder = new File("PRDetails.txt"); // replace with actual path
-        File[] listOfFiles = folder.listFiles();
+        List<String> allPRs = getAllPRs();
+
+        // 在此处添加检查：
+        if (allPRs == null || allPRs.isEmpty()) {
+            return 1;  // 如果allPRs是null或为空，则返回初始ID 1。
+        }
+
         int maxID = 0;
-        for (File file : listOfFiles) {
-            if (file.isFile() && file.getName().startsWith("PR")) {
-                int currentID = Integer.parseInt(file.getName().substring(2, 5));
-                if (currentID > maxID) {
-                    maxID = currentID;
+        for (String pr : allPRs) {
+            String[] details = pr.split("\\$");
+            try {
+                if(details[0].length() >= 5) {
+                    int currentID = Integer.parseInt(details[0].substring(2, 5));  // 只提取PR后的三位数
+                    if (currentID > maxID) {
+                        maxID = currentID;
+                    }
                 }
+            } catch (NumberFormatException e) {
+                // 如果转换失败，则跳过这个条目并继续下一个
+                continue;
             }
         }
         return maxID + 1;

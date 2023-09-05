@@ -268,7 +268,7 @@ public class SupplierDAO {
     public List<String> getAllSuppliers() {
         List<String> suppliers = new ArrayList<>();
         try {
-            BufferedReader reader = new BufferedReader(new FileReader("path_to_supplier.txt"));
+            BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH));
             String line;
             while ((line = reader.readLine()) != null) {
                 suppliers.add(line);
