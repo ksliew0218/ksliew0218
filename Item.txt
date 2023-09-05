@@ -1,2 +1,3 @@
 IT001$Fries$10$12.0$SP001$Food$12/02/2023$true$5
 IT002$Banana$10$12.0$SP001$FOod$12/02/2023$true$3
+IT003$Maggie$30$5.0$SP003$Food$30/09/2023$true$5

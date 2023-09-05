@@ -108,15 +108,9 @@ public class Item implements Entry {
     public void add() {
         ItemDAO itemDAO = new ItemDAO();
         SupplierDAO supplierDAO = new SupplierDAO();
-        do {
-            System.out.print("Enter Item Code: ");
-            itemCode = Utility.readString(10);
-            if (itemDAO.checkDuplicateItemCode(itemCode)) {
-                System.out.println("This Item Code already exists. Please enter a unique Item Code.");
-            }
-        } while (itemDAO.checkDuplicateItemCode(itemCode));
 
-        this.itemCode = itemCode;
+        int itemCount = itemDAO.countItems(); // Assuming countItems() returns the existing number of items
+        this.itemCode = String.format("IT%03d", itemCount + 1); // Formats the item code to "IT" followed by a 3-digit number
 
         System.out.print("Enter Item Name: ");
         this.itemName = Utility.readString(50);
@@ -291,6 +285,4 @@ public class Item implements Entry {
 
     }
 
-    // Additional methods specific to Item
-    // ...
 }
