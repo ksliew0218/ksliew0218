@@ -130,4 +130,33 @@ public class PurchaseRequisitionDAO {
         }
         return prDetails;
     }
+
+    public boolean saveUpdatedPRDetails(List<String> updatedDetails) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH, false))) {
+            for (String detail : updatedDetails) {
+                writer.write(detail);
+                writer.newLine();
+            }
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public List<String> getPRDetailsByPRID(String prID) {
+        List<String> detailsForPRID = new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.startsWith(prID + "$")) {
+                    detailsForPRID.add(line);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return detailsForPRID;
+    }
+
 }

@@ -131,7 +131,7 @@ public class View {
         ItemDAO itemDAO = new ItemDAO();
         SupplierDAO supplierDAO = new SupplierDAO();
         PurchaseRequisitionDAO prDAO = new PurchaseRequisitionDAO();
-        PurchaseRequisition pr = new PurchaseRequisition();
+
         do {
             System.out.println("\n\t\t\t1. Auto-Generate Purchase Requisition");
             System.out.println("\t\t\t2. Manually Create New Purchase Requisition");
@@ -144,15 +144,23 @@ public class View {
 
             switch (choice) {
                 case '1' -> {
-                    String AutoResult = pr.autoGeneratePR(itemDAO, supplierDAO, prDAO);
+                    PurchaseRequisition prAuto = new PurchaseRequisition();
+                    String AutoResult = prAuto.autoGeneratePR(itemDAO, supplierDAO, prDAO);
                     System.out.println(AutoResult);
                 }
                 case '2' -> {
-                    String MnResult = pr.manualGeneratePR(itemDAO, supplierDAO, prDAO);
+                    PurchaseRequisition prManual = new PurchaseRequisition();
+                    String MnResult = prManual.manualGeneratePR(itemDAO, supplierDAO, prDAO);
                     System.out.println(MnResult);
                 }
-                case '3' -> pr.displayPRList(prDAO);
-                case '4' -> pr.editMenu(itemDAO, supplierDAO, prDAO);
+                case '3' -> {
+                    PurchaseRequisition pr = new PurchaseRequisition();
+                    pr.displayPRList(prDAO);
+                }
+                case '4' -> {
+                    PurchaseRequisition pr = new PurchaseRequisition();
+                    pr.editMenu(itemDAO, supplierDAO, prDAO);
+                }
                 case '5' -> {
                     System.out.println("Exiting purchase requisition menu.");
                     return;
@@ -161,6 +169,7 @@ public class View {
             }
         } while (true);
     }
+
 
     public void admin_menu()
     {

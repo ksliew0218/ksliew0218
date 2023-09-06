@@ -26,6 +26,7 @@ public class PurchaseRequisition {
 
     private PurchaseRequisitionDAO dao = new PurchaseRequisitionDAO();
 
+
     public PurchaseRequisition() {
         System.out.println("Creating a new Purchase Requisition...");
         this.salesManagerID = Login.getLoggedInUsername(); // 直接从Login类获取当前登录的用户名
@@ -48,8 +49,6 @@ public class PurchaseRequisition {
         this.CreationDate = prDetails.get("CreationDate");
         this.ExpectedArrivalDays = prDetails.get("ExpectedArrivalDays");
         this.poStatus = "false";
-
-
     }
 
 
@@ -109,10 +108,6 @@ public class PurchaseRequisition {
 
     public List<Map<String, String>> getPrDetailsList() {
         return prDetailsList;
-    }
-
-    public void setPrDetailsList(List<Map<String, String>> prDetailsList) {
-        this.prDetailsList = prDetailsList;
     }
 
     public String autoGeneratePR(ItemDAO itemDAO, SupplierDAO supplierDAO, PurchaseRequisitionDAO prDAO) {
@@ -200,14 +195,10 @@ public class PurchaseRequisition {
         return feedbackForPMFormatted.toString();
     }
 
-    public String manualGeneratePR(ItemDAO itemDAO, SupplierDAO supplierDAO, PurchaseRequisitionDAO prDAO) {
-        String loggedInUsername = Login.getLoggedInUsername();
+    private Map<String, List<String>> buildDictionaries(ItemDAO itemDAO, SupplierDAO supplierDAO, Map<String, String> itemDict) {
         List<String> items = itemDAO.getAllItems();
         List<String> suppliers = supplierDAO.getAllSuppliers();
-        Map<String, String> itemDict = new HashMap<>();
         Map<String, List<String>> supplierDict = new HashMap<>();
-
-        Scanner scanner = new Scanner(System.in);
 
         for (String item : items) {
             String[] itemDetails = item.split("\\$");
@@ -221,14 +212,18 @@ public class PurchaseRequisition {
             }
             supplierDict.get(supplierDetails[0]).add(supplier);
         }
+        return supplierDict;
+    }
+
+    private List<Map<String, String>> addItemToPR(String selectedPRID, String creationDate, String loggedInUsername, ItemDAO itemDAO, SupplierDAO supplierDAO) {
+        Scanner scanner = new Scanner(System.in);
+
+        // Step 1: Build the dictionaries
+        Map<String, String> itemDict = new HashMap<>();
+        Map<String, List<String>> supplierDict = buildDictionaries(itemDAO, supplierDAO, itemDict);
 
         List<Map<String, String>> prDetailsList = new ArrayList<>();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        String creationDate = sdf.format(new Date());
-        String prID = "PR" + String.format("%03d", prDAO.getNextAvailablePRID());
-
-
-        System.out.println("\n------ Manual Purchase Requisition Generation ------\n");
+        List<String> items = itemDAO.getAllItems();
 
         while (true) {
             System.out.println("Available items:\n");
@@ -249,7 +244,6 @@ public class PurchaseRequisition {
 
             System.out.print("\nEnter Item Code (or 'exit' to finish): ");
             String itemCode = scanner.nextLine().trim();
-
 
             if ("exit".equalsIgnoreCase(itemCode)) {
                 break;
@@ -281,22 +275,38 @@ public class PurchaseRequisition {
                 prDetails.put("CreatedBy", loggedInUsername);
                 prDetails.put("SupplierContact", supplierDetails[2]);
                 prDetails.put("ExpectedArrivalDays", supplierDetails[6]);
-                prDetails.put("PRID", prID);  // Use the same PR ID for all items in this batch
+                prDetails.put("PRID", selectedPRID);  // Use the same PR ID for all items in this batch
                 prDetails.put("POStatus", "false");  // Add this line to set the PO status as false
                 prDetailsList.add(prDetails);
             }
 
             System.out.println("\nItem " + selectedItemDetails[1] + " with quantity " + requiredQuantity + " added to PR.\n");
         }
+        return prDetailsList;
+    }
 
+    public String manualGeneratePR(ItemDAO itemDAO, SupplierDAO supplierDAO, PurchaseRequisitionDAO prDAO) {
+        String loggedInUsername = Login.getLoggedInUsername(); // Assuming you have this method.
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String creationDate = sdf.format(new Date());
+        String prID = "PR" + String.format("%03d", prDAO.getNextAvailablePRID());
+
+        System.out.println("\n------ Manual Purchase Requisition Generation ------\n");
+
+        // Use the new method to add items to the PR
+        List<Map<String, String>> prDetailsList = addItemToPR(prID, creationDate, loggedInUsername, itemDAO, supplierDAO);
+
+        // Check if any items were added
         if (prDetailsList.isEmpty()) {
             return "No items selected. PR generation aborted.";
         }
 
+        // Save the added items to the database
         for (Map<String, String> prDetails : prDetailsList) {
             prDAO.savePurchaseRequisition(new PurchaseRequisition(prDetails));
         }
 
+        // Display a summary of the added items
         System.out.println("\n------ Items Added to PR ------");
         for (Map<String, String> prDetails : prDetailsList) {
             System.out.println(prDetails.get("ProductName") +
@@ -304,6 +314,7 @@ public class PurchaseRequisition {
                     " with Supplier: " + prDetails.get("SupplierName"));
         }
 
+        // Construct feedback for the Purchase Manager
         StringBuilder feedbackForPM = new StringBuilder("\n------ Purchase Requisition Details ------\n");
         feedbackForPM.append("PR ID: ").append(prID).append("\n");
         feedbackForPM.append("Creation Date: ").append(creationDate).append("\n");
@@ -320,8 +331,8 @@ public class PurchaseRequisition {
         feedbackForPM.append("\n");
 
         return feedbackForPM.toString() + "Purchase Requisitions have been manually generated and saved.";
-
     }
+
 
     public void displayPRList(PurchaseRequisitionDAO prDAO) {
         List<String> allPRs = prDAO.getAllPRs();
@@ -390,59 +401,87 @@ public class PurchaseRequisition {
             System.out.println("Supplier Code: " + detailsArray[6]);
             System.out.println("Supplier Name: " + detailsArray[7]);
             System.out.println("Current Stock: " + detailsArray[4]);
+            System.out.println("Purchase quantity: " + detailsArray[5]);
             System.out.println("Supplier Contact: " + detailsArray[8]);
             System.out.println("Expected Arrival Days: " + detailsArray[11]);
             System.out.println("------------------------------");
         }
     }
 
-    private boolean addItem(ItemDAO itemDAO, SupplierDAO supplierDAO) {
+
+    public void addItem(ItemDAO itemDAO, SupplierDAO supplierDAO, PurchaseRequisitionDAO prDAO) {
         Scanner scanner = new Scanner(System.in);
-        List<String> items = itemDAO.getAllItems();
+        List<String> allPRs = prDAO.getAllPRs();
+        List<String> prIDs = new ArrayList<>();
+        Map<Integer, String> prMenu = new HashMap<>();
 
-        while (true) {
-            System.out.println("\nAvailable items:");
-            for (String item : items) {
-                String[] details = item.split("\\$");
-                System.out.println(details[0] + ": " + details[1] + " (Current Stock: " + details[2] + ")");
+        for (String pr : allPRs) {
+            String[] details = pr.split("\\$");
+            String prID = details[0];
+            String poStatus = details[details.length - 1];
+            if (!"true".equalsIgnoreCase(poStatus) && !prIDs.contains(prID) && !"null".equalsIgnoreCase(prID)) {
+                prIDs.add(prID);
             }
-
-            System.out.print("\nEnter Item Code (or 'exit' to finish): ");
-            String itemCode = scanner.nextLine().trim();
-
-            if ("exit".equalsIgnoreCase(itemCode)) {
-                break;
-            }
-
-            if (items.stream().noneMatch(item -> item.split("\\$")[0].equals(itemCode))) {
-                System.out.println("Invalid Item Code. Please try again.");
-                continue;
-            }
-
-            System.out.print("Enter the required quantity for the selected item: ");
-            int quantity;
-            try {
-                quantity = Integer.parseInt(scanner.nextLine().trim());
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid input. Please enter a valid number.");
-                continue;
-            }
-
-            // Extract details from the selected item
-            String selectedItem = items.stream().filter(item -> item.split("\\$")[0].equals(itemCode)).findFirst().orElse(null);
-            String[] selectedItemDetails = selectedItem.split("\\$");
-
-            Map<String, String> prDetails = new HashMap<>();
-            prDetails.put("ItemCode", selectedItemDetails[0]);
-            prDetails.put("ProductName", selectedItemDetails[1]);
-            prDetails.put("Quantity", String.valueOf(quantity));
-            // ... [fill other details as required]
-
-            prDetailsList.add(prDetails);
-            System.out.println("\nItem " + selectedItemDetails[1] + " added to PR with quantity " + quantity + ".\n");
         }
-        return true;
+
+        if (prIDs.isEmpty()) {
+            System.out.println("No editable PRs available.");
+            return;
+        }
+
+        System.out.println("\nAvailable PRs for adding items:");
+        for (int i = 0; i < prIDs.size(); i++) {
+            System.out.println((i + 1) + ". " + prIDs.get(i));
+            prMenu.put(i + 1, prIDs.get(i));
+        }
+
+        System.out.print("Select the PR number to add items to: ");
+        int prIndex;
+        try {
+            prIndex = Integer.parseInt(scanner.nextLine().trim());
+            if (!prMenu.containsKey(prIndex)) {
+                throw new NumberFormatException();
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid selection. Please select a valid PR number.");
+            return;
+        }
+
+        String selectedPRID = prMenu.get(prIndex);
+
+        // Display the PR details before adding items
+        displayPRDetails(selectedPRID, prDAO);
+
+        String loggedInUsername = Login.getLoggedInUsername();  // Assuming you have this method.
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String creationDate = sdf.format(new Date());
+
+        // Use the new method to add items to the PR
+        List<Map<String, String>> prDetailsList = addItemToPR(selectedPRID, creationDate, loggedInUsername, itemDAO, supplierDAO);
+
+        if (!prDetailsList.isEmpty()) {
+            System.out.println("\n------ Items to be Added to PR ------");
+            for (Map<String, String> prDetails : prDetailsList) {
+                System.out.println(prDetails.get("ProductName") +
+                        " (Quantity: " + prDetails.get("Quantity") + ")" +
+                        " with Supplier: " + prDetails.get("SupplierName"));
+            }
+
+            System.out.print("\nDo you confirm the additions? (yes/no): ");
+            String confirmation = scanner.nextLine().trim().toLowerCase();
+            if ("yes".equals(confirmation)) {
+                for (Map<String, String> prDetails : prDetailsList) {
+                    prDAO.savePurchaseRequisition(new PurchaseRequisition(prDetails));
+                }
+                System.out.println("Items added successfully to PR " + selectedPRID + "!");
+            } else {
+                System.out.println("Addition of items to PR cancelled.");
+            }
+        } else {
+            System.out.println("No items were added to the PR.");
+        }
     }
+
 
 
     private boolean changeSupplier(ItemDAO itemDAO, SupplierDAO supplierDAO) {
@@ -493,17 +532,22 @@ public class PurchaseRequisition {
     }
 
 
-    private boolean editItemQuantity(String selectedPRID) {
+    private void editItemQuantity(String selectedPRID, PurchaseRequisitionDAO prDAO) {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter the Item Code of the item you wish to modify: ");
         String itemCode = scanner.nextLine().trim();
 
-        // Check if item exists in the selected PR
-        if (!prDetailsList.stream()
-                .anyMatch(detail -> detail.get("ItemCode").equals(itemCode) &&
-                        detail.get("PRID").equals(selectedPRID))) {
+        // Load all PR details from file
+        List<String> allPrDetailsFromFile = prDAO.getAllPRs();
+
+        // Check if the item exists in the selected PR
+        String matchingDetail = allPrDetailsFromFile.stream()
+                .filter(detail -> detail.startsWith(selectedPRID + "$" + itemCode + "$"))
+                .findFirst().orElse(null);
+
+        if (matchingDetail == null) {
             System.out.println("Item not found in the selected PR.");
-            return false;
+            return;
         }
 
         System.out.print("Enter the new quantity for the item: ");
@@ -512,39 +556,64 @@ public class PurchaseRequisition {
             newQuantity = Integer.parseInt(scanner.nextLine().trim());
         } catch (NumberFormatException e) {
             System.out.println("Invalid input. Please enter a valid number.");
-            return false;
+            return;
+        }
+
+        // Preview the updated PR details
+        String[] details = matchingDetail.split("\\$");
+        details[5] = String.valueOf(newQuantity);  // Assuming the 6th field is the quantity
+        String updatedDetail = String.join("$", details);
+        System.out.println("Updated PR details: " + updatedDetail);
+
+        // Confirm the changes
+        System.out.print("Do you confirm the changes? (yes/no): ");
+        String confirmation = scanner.nextLine().trim().toLowerCase();
+        if (!"yes".equals(confirmation)) {
+            System.out.println("Changes discarded.");
+            return;
         }
 
         // Update the item quantity in the PR
-        for (Map<String, String> detail : prDetailsList) {
-            if (detail.get("ItemCode").equals(itemCode) && detail.get("PRID").equals(selectedPRID)) {
-                detail.put("Quantity", String.valueOf(newQuantity));
-                System.out.println("Quantity for item " + itemCode + " in PR " + selectedPRID + " updated to " + newQuantity);
-                return true;
-            }
-        }
-        return false;
+        int indexToUpdate = allPrDetailsFromFile.indexOf(matchingDetail);
+        allPrDetailsFromFile.set(indexToUpdate, updatedDetail);
+
+        // Save the entire list (with all PR details) back to the file
+        prDAO.saveUpdatedPRDetails(allPrDetailsFromFile);
+        System.out.println("Quantity for item " + itemCode + " in PR " + selectedPRID + " updated to " + newQuantity);
     }
 
-
-    private boolean deleteItem() {
+    private void deleteItem(String selectedPRID, PurchaseRequisitionDAO prDAO) {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter the Item Code of the item you wish to delete: ");
         String itemCode = scanner.nextLine().trim();
 
-        // Check if item exists in the PR
-        boolean itemExists = prDetailsList.stream().anyMatch(detail -> detail.get("ItemCode").equals(itemCode));
-        if (!itemExists) {
-            System.out.println("Item not found in the PR.");
-            return false;
+        // Load all PR details from file, not just the selected PR's details
+        List<String> allPrDetailsFromFile = prDAO.getAllPRs();
+
+        // Find the matching detail line
+        String matchingDetail = allPrDetailsFromFile.stream()
+                .filter(detail -> detail.startsWith(selectedPRID + "$" + itemCode + "$"))
+                .findFirst().orElse(null);
+
+        if (matchingDetail == null) {
+            System.out.println("Item not found in the selected PR.");
+            return;
         }
 
-        // Remove the item from the PR
-        prDetailsList.removeIf(detail -> detail.get("ItemCode").equals(itemCode));
-        System.out.println("Item " + itemCode + " removed from the PR.");
-        return true;
-    }
+        // Display the details of the item to be deleted
+        System.out.println("Details of the item to be deleted: " + matchingDetail);
 
+        System.out.print("Are you sure you want to delete this item? (yes/no): ");
+        String confirmation = scanner.nextLine().trim().toLowerCase();
+        if ("yes".equals(confirmation)) {
+            allPrDetailsFromFile.remove(matchingDetail); // Remove the matching detail from the list
+            // Save the entire list (with all PR details) back to the file
+            prDAO.saveUpdatedPRDetails(allPrDetailsFromFile);
+            System.out.println("Item deleted successfully!");
+        } else {
+            System.out.println("Item deletion cancelled.");
+        }
+    }
 
     public void editMenu(ItemDAO itemDAO, SupplierDAO supplierDAO, PurchaseRequisitionDAO prDAO) {
         Scanner scanner = new Scanner(System.in);
@@ -557,8 +626,6 @@ public class PurchaseRequisition {
             System.out.println("4. Add Item");
             System.out.println("5. Exit");
             System.out.print("Enter your choice: ");
-
-            boolean changesMade = false;
 
 
             int choice;
@@ -613,37 +680,22 @@ public class PurchaseRequisition {
 
                 switch (choice) {
                     case 1:
-                        changesMade = changeSupplier(itemDAO, supplierDAO) || changesMade;
+                        changeSupplier(itemDAO, supplierDAO);
                         break;
                     case 2:
-                        changesMade = editItemQuantity(selectedPRID) || changesMade;
+                        editItemQuantity(selectedPRID, prDAO);
                         break;
                     case 3:
-                        changesMade = deleteItem() || changesMade;
+                        deleteItem(selectedPRID, prDAO);
                         break;
                     case 4:
-                        changesMade = addItem(itemDAO, supplierDAO) || changesMade;
+                        addItem(itemDAO, supplierDAO, prDAO);
                         break;
                     default:
                         System.out.println("Invalid choice. Please select a number between 1 and 5.");
                         continue;
                 }
 
-                if (changesMade) {
-
-                    // Display the PR details after editing
-                    displayPRDetails(selectedPRID, prDAO);
-
-                    System.out.print("Do you confirm the changes? (yes/no): ");
-                    String confirmation = scanner.nextLine().trim().toLowerCase();
-                    if ("yes".equals(confirmation)) {
-                        prDAO.savePurchaseRequisition(this);
-                        System.out.println("Changes saved successfully!");
-                    } else {
-                        System.out.println("Changes discarded.");
-                        continue; // This will take the user back to the "Edit Purchase Requisition Menu"
-                    }
-                }
             } else if (choice == 5) {
                 return;
             } else {
