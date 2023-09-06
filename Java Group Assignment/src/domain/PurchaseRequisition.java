@@ -271,12 +271,12 @@ public class PurchaseRequisition {
                 prDetails.put("SupplierName", supplierDetails[1]);
                 prDetails.put("CreationDate", creationDate);
                 prDetails.put("CurrentStock", selectedItemDetails[2]);
-                prDetails.put("Quantity", String.valueOf(requiredQuantity));  // 保存用户输入的数量
+                prDetails.put("Quantity", String.valueOf(requiredQuantity));
                 prDetails.put("CreatedBy", loggedInUsername);
                 prDetails.put("SupplierContact", supplierDetails[2]);
                 prDetails.put("ExpectedArrivalDays", supplierDetails[6]);
-                prDetails.put("PRID", selectedPRID);  // Use the same PR ID for all items in this batch
-                prDetails.put("POStatus", "false");  // Add this line to set the PO status as false
+                prDetails.put("PRID", selectedPRID);
+                prDetails.put("POStatus", "false");
                 prDetailsList.add(prDetails);
             }
 
@@ -332,7 +332,6 @@ public class PurchaseRequisition {
 
         return feedbackForPM.toString() + "Purchase Requisitions have been manually generated and saved.";
     }
-
 
     public void displayPRList(PurchaseRequisitionDAO prDAO) {
         List<String> allPRs = prDAO.getAllPRs();
@@ -408,49 +407,8 @@ public class PurchaseRequisition {
         }
     }
 
-
-    public void addItem(ItemDAO itemDAO, SupplierDAO supplierDAO, PurchaseRequisitionDAO prDAO) {
+    public void addItem(String selectedPRID, ItemDAO itemDAO, SupplierDAO supplierDAO, PurchaseRequisitionDAO prDAO) {
         Scanner scanner = new Scanner(System.in);
-        List<String> allPRs = prDAO.getAllPRs();
-        List<String> prIDs = new ArrayList<>();
-        Map<Integer, String> prMenu = new HashMap<>();
-
-        for (String pr : allPRs) {
-            String[] details = pr.split("\\$");
-            String prID = details[0];
-            String poStatus = details[details.length - 1];
-            if (!"true".equalsIgnoreCase(poStatus) && !prIDs.contains(prID) && !"null".equalsIgnoreCase(prID)) {
-                prIDs.add(prID);
-            }
-        }
-
-        if (prIDs.isEmpty()) {
-            System.out.println("No editable PRs available.");
-            return;
-        }
-
-        System.out.println("\nAvailable PRs for adding items:");
-        for (int i = 0; i < prIDs.size(); i++) {
-            System.out.println((i + 1) + ". " + prIDs.get(i));
-            prMenu.put(i + 1, prIDs.get(i));
-        }
-
-        System.out.print("Select the PR number to add items to: ");
-        int prIndex;
-        try {
-            prIndex = Integer.parseInt(scanner.nextLine().trim());
-            if (!prMenu.containsKey(prIndex)) {
-                throw new NumberFormatException();
-            }
-        } catch (NumberFormatException e) {
-            System.out.println("Invalid selection. Please select a valid PR number.");
-            return;
-        }
-
-        String selectedPRID = prMenu.get(prIndex);
-
-        // Display the PR details before adding items
-        displayPRDetails(selectedPRID, prDAO);
 
         String loggedInUsername = Login.getLoggedInUsername();  // Assuming you have this method.
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -481,8 +439,6 @@ public class PurchaseRequisition {
             System.out.println("No items were added to the PR.");
         }
     }
-
-
 
     private boolean changeSupplier(ItemDAO itemDAO, SupplierDAO supplierDAO) {
         Scanner scanner = new Scanner(System.in);
@@ -689,7 +645,7 @@ public class PurchaseRequisition {
                         deleteItem(selectedPRID, prDAO);
                         break;
                     case 4:
-                        addItem(itemDAO, supplierDAO, prDAO);
+                        addItem(selectedPRID, itemDAO, supplierDAO, prDAO);
                         break;
                     default:
                         System.out.println("Invalid choice. Please select a number between 1 and 5.");
