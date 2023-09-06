@@ -396,7 +396,7 @@ public class PurchaseRequisition {
         }
     }
 
-    private void addItem(ItemDAO itemDAO, SupplierDAO supplierDAO) {
+    private boolean addItem(ItemDAO itemDAO, SupplierDAO supplierDAO) {
         Scanner scanner = new Scanner(System.in);
         List<String> items = itemDAO.getAllItems();
 
@@ -441,9 +441,11 @@ public class PurchaseRequisition {
             prDetailsList.add(prDetails);
             System.out.println("\nItem " + selectedItemDetails[1] + " added to PR with quantity " + quantity + ".\n");
         }
+        return true;
     }
 
-    private void changeSupplier(ItemDAO itemDAO, SupplierDAO supplierDAO) {
+
+    private boolean changeSupplier(ItemDAO itemDAO, SupplierDAO supplierDAO) {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter the Item Code of the item you wish to change the supplier for: ");
         String itemCode = scanner.nextLine().trim();
@@ -453,42 +455,55 @@ public class PurchaseRequisition {
 
         if (potentialSuppliers.isEmpty()) {
             System.out.println("No other suppliers available for this item.");
-            return;
+            return false;
         }
 
-        System.out.println("Available suppliers for the item:");
+        System.out.println("Available suppliers for item " + itemCode + ":");
+        int counter = 1;
         for (String supplier : potentialSuppliers) {
-            System.out.println(supplier);
+            System.out.println(counter + ". " + supplier);
+            counter++;
         }
 
-        System.out.print("Enter the Supplier Code of the new supplier: ");
-        String newSupplierCode = scanner.nextLine().trim();
-
-        // Check if the selected supplier is valid for the item
-        if (!potentialSuppliers.contains(newSupplierCode)) {
-            System.out.println("Invalid Supplier Code.");
-            return;
+        System.out.print("Select the number of the new supplier: ");
+        int supplierChoice;
+        try {
+            supplierChoice = Integer.parseInt(scanner.nextLine().trim());
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input. Please select a valid number from the list.");
+            return false;
         }
 
-        // Update the supplier in the PR
+        if (supplierChoice < 1 || supplierChoice > potentialSuppliers.size()) {
+            System.out.println("Invalid choice. Please select a valid number from the list.");
+            return false;
+        }
+
+        String chosenSupplier = potentialSuppliers.get(supplierChoice - 1);
         for (Map<String, String> detail : prDetailsList) {
             if (detail.get("ItemCode").equals(itemCode)) {
-                detail.put("SupplierCode", newSupplierCode);
-                System.out.println("Supplier for item " + itemCode + " changed to " + newSupplierCode);
-                break;
+                detail.put("Supplier", chosenSupplier);
+                // Assuming there's an ItemCode-Supplier mapping in the DAOs, you might need to update the item code too.
+                // detail.put("ItemCode", itemDAO.getNewItemCodeForSupplier(itemCode, chosenSupplier));
+                System.out.println("Supplier for item " + itemCode + " changed to " + chosenSupplier);
+                return true;
             }
         }
+        return false;
     }
 
-    private void editItemQuantity() {
+
+    private boolean editItemQuantity(String selectedPRID) {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter the Item Code of the item you wish to modify: ");
         String itemCode = scanner.nextLine().trim();
 
-        // Check if item exists in the PR
-        if (!prDetailsList.stream().anyMatch(detail -> detail.get("ItemCode").equals(itemCode))) {
-            System.out.println("Item not found in the PR.");
-            return;
+        // Check if item exists in the selected PR
+        if (!prDetailsList.stream()
+                .anyMatch(detail -> detail.get("ItemCode").equals(itemCode) &&
+                        detail.get("PRID").equals(selectedPRID))) {
+            System.out.println("Item not found in the selected PR.");
+            return false;
         }
 
         System.out.print("Enter the new quantity for the item: ");
@@ -497,28 +512,39 @@ public class PurchaseRequisition {
             newQuantity = Integer.parseInt(scanner.nextLine().trim());
         } catch (NumberFormatException e) {
             System.out.println("Invalid input. Please enter a valid number.");
-            return;
+            return false;
         }
 
         // Update the item quantity in the PR
         for (Map<String, String> detail : prDetailsList) {
-            if (detail.get("ItemCode").equals(itemCode)) {
+            if (detail.get("ItemCode").equals(itemCode) && detail.get("PRID").equals(selectedPRID)) {
                 detail.put("Quantity", String.valueOf(newQuantity));
-                System.out.println("Quantity for item " + itemCode + " updated to " + newQuantity);
-                break;
+                System.out.println("Quantity for item " + itemCode + " in PR " + selectedPRID + " updated to " + newQuantity);
+                return true;
             }
         }
+        return false;
     }
 
-    private void deleteItem() {
+
+    private boolean deleteItem() {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter the Item Code of the item you wish to delete: ");
         String itemCode = scanner.nextLine().trim();
 
+        // Check if item exists in the PR
+        boolean itemExists = prDetailsList.stream().anyMatch(detail -> detail.get("ItemCode").equals(itemCode));
+        if (!itemExists) {
+            System.out.println("Item not found in the PR.");
+            return false;
+        }
+
         // Remove the item from the PR
         prDetailsList.removeIf(detail -> detail.get("ItemCode").equals(itemCode));
         System.out.println("Item " + itemCode + " removed from the PR.");
+        return true;
     }
+
 
     public void editMenu(ItemDAO itemDAO, SupplierDAO supplierDAO, PurchaseRequisitionDAO prDAO) {
         Scanner scanner = new Scanner(System.in);
@@ -531,6 +557,9 @@ public class PurchaseRequisition {
             System.out.println("4. Add Item");
             System.out.println("5. Exit");
             System.out.print("Enter your choice: ");
+
+            boolean changesMade = false;
+
 
             int choice;
             try {
@@ -584,33 +613,36 @@ public class PurchaseRequisition {
 
                 switch (choice) {
                     case 1:
-                        changeSupplier(itemDAO, supplierDAO);
+                        changesMade = changeSupplier(itemDAO, supplierDAO) || changesMade;
                         break;
                     case 2:
-                        editItemQuantity();
+                        changesMade = editItemQuantity(selectedPRID) || changesMade;
                         break;
                     case 3:
-                        deleteItem();
+                        changesMade = deleteItem() || changesMade;
                         break;
                     case 4:
-                        addItem(itemDAO, supplierDAO);
+                        changesMade = addItem(itemDAO, supplierDAO) || changesMade;
                         break;
                     default:
                         System.out.println("Invalid choice. Please select a number between 1 and 5.");
                         continue;
                 }
 
-                // Display the PR details after editing
-                displayPRDetails(selectedPRID, prDAO);
+                if (changesMade) {
 
-                System.out.print("Do you confirm the changes? (yes/no): ");
-                String confirmation = scanner.nextLine().trim().toLowerCase();
-                if ("yes".equals(confirmation)) {
-                    prDAO.savePurchaseRequisition(this);
-                    System.out.println("Changes saved successfully!");
-                } else {
-                    System.out.println("Changes discarded.");
-                    continue; // This will take the user back to the "Edit Purchase Requisition Menu"
+                    // Display the PR details after editing
+                    displayPRDetails(selectedPRID, prDAO);
+
+                    System.out.print("Do you confirm the changes? (yes/no): ");
+                    String confirmation = scanner.nextLine().trim().toLowerCase();
+                    if ("yes".equals(confirmation)) {
+                        prDAO.savePurchaseRequisition(this);
+                        System.out.println("Changes saved successfully!");
+                    } else {
+                        System.out.println("Changes discarded.");
+                        continue; // This will take the user back to the "Edit Purchase Requisition Menu"
+                    }
                 }
             } else if (choice == 5) {
                 return;
