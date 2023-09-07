@@ -170,6 +170,41 @@ public class View {
         } while (true);
     }
 
+    public void PurchaseOrderMenu() {
+        char choice;
+        ItemDAO itemDAO = new ItemDAO();
+        SupplierDAO supplierDAO = new SupplierDAO();
+        PurchaseRequisitionDAO prDAO = new PurchaseRequisitionDAO();
+        PurchaseOrderDAO poDAO = new PurchaseOrderDAO();
+
+        PurchaseOrder poInstance = new PurchaseOrder();
+
+        do {
+            System.out.println("\n\t\t\t1. Generate PO from PR");
+            System.out.println("\t\t\t2. Display All POs");
+            System.out.println("\t\t\t3. Edit PO");
+            System.out.println("\t\t\t4. Delete PO");
+            System.out.println("\t\t\t5. Back");
+
+            System.out.print("Please enter your choice: ");
+            choice = Utility.readChar();
+
+            switch (choice) {
+                case '1':
+                    poInstance.generatePOFromPR(prDAO, poDAO, supplierDAO, itemDAO);
+                    break;
+                case '5':
+                    System.out.println("Exiting purchase order menu.");
+                    return;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+                    break;
+            }
+        } while (true);
+    }
+
+
+
 
     public void admin_menu()
     {

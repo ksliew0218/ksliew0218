@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class PurchaseRequisitionDAO {
     private static final String FILE_PATH = "PRDetails.txt"; // Path to the text file where PR data is stored
@@ -159,4 +160,49 @@ public class PurchaseRequisitionDAO {
         return detailsForPRID;
     }
 
+
+    /**
+     * 获取所有 poStatus 为 false 的 PR
+     * @return List of PRs with poStatus = false
+     */
+    public List<String> getAllEditablePRs() {
+        List<String> editablePRs = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader("PRDetails.txt"))) {
+            editablePRs = br.lines()
+                    .filter(line -> !line.split("\\$")[line.split("\\$").length - 1].equalsIgnoreCase("true"))
+                    .collect(Collectors.toList());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return editablePRs;
+    }
+
+    /**
+     * 更新给定 PR 的 poStatus
+     * @param pr The PR to update
+     * @param status The new status
+     */
+    public void updatePOStatus(String pr, boolean status) {
+        List<String> allPRs = new ArrayList<>();
+        String updatedPR = pr.substring(0, pr.lastIndexOf("$")) + "$" + status;
+
+        try (BufferedReader br = new BufferedReader(new FileReader("PRDetails.txt"))) {
+            allPRs = br.lines().collect(Collectors.toList());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        int prIndex = allPRs.indexOf(pr);
+        if (prIndex != -1) {
+            allPRs.set(prIndex, updatedPR);
+        }
+
+        try (PrintWriter pw = new PrintWriter(new FileWriter("PRDetails.txt"))) {
+            for (String line : allPRs) {
+                pw.println(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

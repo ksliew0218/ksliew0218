@@ -24,14 +24,9 @@ public class PurchaseRequisition {
 
     private List<Map<String, String>> prDetailsList = new ArrayList<>();
 
-    private PurchaseRequisitionDAO dao = new PurchaseRequisitionDAO();
-
-
     public PurchaseRequisition() {
         System.out.println("Creating a new Purchase Requisition...");
         this.salesManagerID = Login.getLoggedInUsername(); // 直接从Login类获取当前登录的用户名
-        // Save the PR details using DAO
-        dao.savePurchaseRequisition(this);
     }
 
     // 修改后的构造函数
@@ -171,7 +166,7 @@ public class PurchaseRequisition {
                 // Construct feedback for PM
                 String feedback = "Item: " + itemDetails[1] + " (Item Code: " + itemDetails[0] + ")" +
                         " with Supplier: " + supplierDetails[1] + " (Supplier Code: " + supplierDetails[0] + ")" +
-                        ", Current Stock: " + prDetails.get("CurrentStock") + ", Quantity Order: " + prDetails.get("Quantity") +
+                        ", Current Stock: " + prDetails.get("CurrentStock") + ", Recommended quantity: " + prDetails.get("Quantity") +
                         ", Expected Arrival Day: " + prDetails.get("ExpectedArrivalDays");
                 feedbackForPM.add(feedback);
             }
@@ -377,7 +372,7 @@ public class PurchaseRequisition {
         }
     }
 
-    private void displayPRDetails(String prID, PurchaseRequisitionDAO prDAO) {
+    public void displayPRDetails(String prID, PurchaseRequisitionDAO prDAO) {
         List<String> prDetails = prDAO.getPRDetails(prID);
 
         // 打印购买申请的标题和公共信息
@@ -400,7 +395,7 @@ public class PurchaseRequisition {
             System.out.println("Supplier Code: " + detailsArray[6]);
             System.out.println("Supplier Name: " + detailsArray[7]);
             System.out.println("Current Stock: " + detailsArray[4]);
-            System.out.println("Purchase quantity: " + detailsArray[5]);
+            System.out.println("Recommended quantity: " + detailsArray[5]);
             System.out.println("Supplier Contact: " + detailsArray[8]);
             System.out.println("Expected Arrival Days: " + detailsArray[11]);
             System.out.println("------------------------------");
@@ -439,54 +434,6 @@ public class PurchaseRequisition {
             System.out.println("No items were added to the PR.");
         }
     }
-
-    private boolean changeSupplier(ItemDAO itemDAO, SupplierDAO supplierDAO) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter the Item Code of the item you wish to change the supplier for: ");
-        String itemCode = scanner.nextLine().trim();
-
-        // Fetch other suppliers for the item
-        List<String> potentialSuppliers = supplierDAO.getSuppliersForItem(itemCode);
-
-        if (potentialSuppliers.isEmpty()) {
-            System.out.println("No other suppliers available for this item.");
-            return false;
-        }
-
-        System.out.println("Available suppliers for item " + itemCode + ":");
-        int counter = 1;
-        for (String supplier : potentialSuppliers) {
-            System.out.println(counter + ". " + supplier);
-            counter++;
-        }
-
-        System.out.print("Select the number of the new supplier: ");
-        int supplierChoice;
-        try {
-            supplierChoice = Integer.parseInt(scanner.nextLine().trim());
-        } catch (NumberFormatException e) {
-            System.out.println("Invalid input. Please select a valid number from the list.");
-            return false;
-        }
-
-        if (supplierChoice < 1 || supplierChoice > potentialSuppliers.size()) {
-            System.out.println("Invalid choice. Please select a valid number from the list.");
-            return false;
-        }
-
-        String chosenSupplier = potentialSuppliers.get(supplierChoice - 1);
-        for (Map<String, String> detail : prDetailsList) {
-            if (detail.get("ItemCode").equals(itemCode)) {
-                detail.put("Supplier", chosenSupplier);
-                // Assuming there's an ItemCode-Supplier mapping in the DAOs, you might need to update the item code too.
-                // detail.put("ItemCode", itemDAO.getNewItemCodeForSupplier(itemCode, chosenSupplier));
-                System.out.println("Supplier for item " + itemCode + " changed to " + chosenSupplier);
-                return true;
-            }
-        }
-        return false;
-    }
-
 
     private void editItemQuantity(String selectedPRID, PurchaseRequisitionDAO prDAO) {
         Scanner scanner = new Scanner(System.in);
@@ -636,7 +583,6 @@ public class PurchaseRequisition {
 
                 switch (choice) {
                     case 1:
-                        changeSupplier(itemDAO, supplierDAO);
                         break;
                     case 2:
                         editItemQuantity(selectedPRID, prDAO);
