@@ -205,4 +205,32 @@ public class PurchaseRequisitionDAO {
             e.printStackTrace();
         }
     }
+
+    public void updateItemQuantityInPR(String prID, String itemCode, int newQuantity) {
+        // Load all PR details from file
+        List<String> allPrDetails = getAllPRs();
+
+        // Check if the item exists in the selected PR
+        String matchingDetail = allPrDetails.stream()
+                .filter(detail -> detail.startsWith(prID + "$" + itemCode + "$"))
+                .findFirst().orElse(null);
+
+        if (matchingDetail == null) {
+            System.out.println("Item not found in the selected PR.");
+            return;
+        }
+
+        // Update the item quantity in the detail string
+        String[] details = matchingDetail.split("\\$");
+        details[5] = String.valueOf(newQuantity);  // Assuming the 6th field is the quantity
+        String updatedDetail = String.join("$", details);
+
+        // Replace the old detail string with the updated one
+        int indexToUpdate = allPrDetails.indexOf(matchingDetail);
+        allPrDetails.set(indexToUpdate, updatedDetail);
+
+        // Save the entire list (with all PR details) back to the file
+        saveUpdatedPRDetails(allPrDetails);
+    }
+
 }
