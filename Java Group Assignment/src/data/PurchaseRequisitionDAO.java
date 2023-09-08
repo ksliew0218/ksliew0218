@@ -5,13 +5,12 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import utility.Utility;
 
 public class PurchaseRequisitionDAO {
     private static final String FILE_PATH = "PRDetails.txt"; // Path to the text file where PR data is stored
     private static final String DELIMITER = "$"; // Delimiter used in the text file
 
-    public boolean savePurchaseRequisition(PurchaseRequisition pr) {
+    public void savePurchaseRequisition(PurchaseRequisition pr) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH, true))) {
             // Create a string representation of the PurchaseRequisition object
             String prRecord = String.join(DELIMITER,
@@ -34,10 +33,8 @@ public class PurchaseRequisitionDAO {
             // Write the string representation of the PR to the text file
             writer.write(prRecord);
             writer.newLine(); // Add a new line to separate records
-            return true; // Successfully saved the PR
         } catch (IOException e) {
             e.printStackTrace();
-            return false; // Failed to save the PR
         }
     }
 
