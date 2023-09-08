@@ -3,67 +3,71 @@ package domain;
 import java.util.*;
 
 import data.*;
-
 import utility.Utility;
 
-public class PurchaseOrder {
 
+public class PurchaseOrder {
     private String POID;
+    private String PRID;  // Related Purchase Requisition ID
     private String creationDate;
     private String createdBy;
-    private Map<String, Integer> items;
+    private Map<String, Map<String, String>> items;  // Item Code and its details
 
-    // 添加默认构造器
-    public PurchaseOrder() {}
+    public PurchaseOrder() {
+        this.items = new HashMap<>();
+    }
 
-    public PurchaseOrder(String POID, String creationDate, String createdBy) {
+    public String getPOID() {
+        return POID;
+    }
+
+    public void setPOID(String POID) {
         this.POID = POID;
+    }
+
+    public String getPRID() {
+        return PRID;
+    }
+
+    public void setPRID(String PRID) {
+        this.PRID = PRID;
+    }
+
+    public String getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(String creationDate) {
         this.creationDate = creationDate;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
-        this.items = new HashMap<>();
     }
 
-    public PurchaseOrder(String record) {
-        String[] details = record.split("\\$");
-        this.POID = details[0];
-        this.creationDate = details[1];
-        this.createdBy = details[2];
-        this.items = new HashMap<>();
-
-        for (int i = 3; i < details.length - 1; i += 2) {
-            this.items.put(details[i], Integer.parseInt(details[i + 1]));
-        }
+    public Map<String, Map<String, String>> getItems() {
+        return items;
     }
 
-    public void addItem(String itemCode, int quantity) {
-        items.put(itemCode, quantity);
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(POID).append("$")
-                .append(creationDate).append("$")
-                .append(createdBy);
-
-        for (Map.Entry<String, Integer> entry : items.entrySet()) {
-            sb.append("$").append(entry.getKey())
-                    .append("$").append(entry.getValue());
-        }
-        return sb.toString();
+    public void setItems(Map<String, Map<String, String>> items) {
+        this.items = items;
     }
 
     public void generatePOFromPR(PurchaseRequisitionDAO prDAO, PurchaseOrderDAO poDAO, SupplierDAO supplierDAO, ItemDAO itemDAO) {
         Scanner scanner = new Scanner(System.in);
+        Map<String, Map<String, String>> itemsForNewPO = new HashMap<>();
+        int totalAmount = 0;
 
-        // 1. 获取所有可编辑的PR并显示PR编号
-        List<String> allPRs = prDAO.getAllEditablePRs();
-        Map<Integer, String> prMap = displaySelectablePRs(allPRs);
-
-        // 2. 让用户选择PR
+        // Step 1: Display all available PRs and let user select one
+        List<String> allEditablePRs = prDAO.getAllEditablePRs();
+        Map<Integer, String> prMap = displaySelectablePRs(allEditablePRs);
         System.out.print("请选择要生成PO的PR编号: ");
         int selectedPRIndex = scanner.nextInt();
-        scanner.nextLine();  // Consume newline
+        scanner.nextLine();
 
         if (!prMap.containsKey(selectedPRIndex)) {
             System.out.println("选择无效!");
@@ -72,22 +76,23 @@ public class PurchaseOrder {
 
         String selectedPRID = prMap.get(selectedPRIndex);
         List<String> selectedPRDetails = prDAO.getPRDetails(selectedPRID);
-        List<String> itemsToBeAddedToPO = new ArrayList<>();
 
         while (true) {
-            // 3. 显示选择的PR的内容
+            // Step 2: Display details of the selected PR
             System.out.println("\n选中的PR详细信息: \n");
             PurchaseRequisition pr = new PurchaseRequisition();
             pr.displayPRDetails(selectedPRID, prDAO);
 
-
+            // Step 3: Let user select an item code and quantity
             System.out.print("请输入要加入到PO的item code (或 'exit' 退出): ");
-            String itemCodeChoice = scanner.nextLine().trim();
+            String itemCode = scanner.nextLine().trim();
 
-            // 6. 询问用户是否要使用推荐的数量还是输入新的数量
-            // (此处基于你提供的代码进行了简化)
+            if ("exit".equalsIgnoreCase(itemCode)) {
+                break;
+            }
+
             String matchingDetail = selectedPRDetails.stream()
-                    .filter(detail -> detail.startsWith(selectedPRID + "$" + itemCodeChoice + "$"))
+                    .filter(detail -> detail.startsWith(selectedPRID + "$" + itemCode + "$"))
                     .findFirst().orElse(null);
 
             if (matchingDetail == null) {
@@ -100,79 +105,176 @@ public class PurchaseOrder {
             System.out.print("请输入新的数量 (或按Enter使用推荐数量): ");
             int newQuantity = Utility.readInt(Integer.parseInt(itemDetails[5]));
 
-            // 将更新的item details添加到PO列表中
-            itemsToBeAddedToPO.add(matchingDetail.replace(itemDetails[5], String.valueOf(newQuantity)));
+            // Add to itemsForNewPO
+            Map<String, String> itemInfo = new HashMap<>();
+            itemInfo.put("ItemName", itemDetails[2]);
+            itemInfo.put("Category", itemDetails[3]);
+            itemInfo.put("Price", itemDetails[4]);
+            itemInfo.put("Quantity", String.valueOf(newQuantity));
+            itemInfo.put("SupplierID", itemDetails[6]);
+            itemInfo.put("SupplierName", itemDetails[7]);
+            itemInfo.put("SupplierContact", itemDetails[8]);
+            itemInfo.put("ExpectedArrivalDays", itemDetails[11]);
+            itemsForNewPO.put(itemCode, itemInfo);
+
+            // Update totalAmount
+            totalAmount += newQuantity * Integer.parseInt(itemDetails[4]);
         }
 
-// 7. 显示生成的PO内容
-/*
-        String poDetails = generatePODetails(selectedPRID, itemsToBeAddedToPO, itemDAO);
-        System.out.println("\n生成的PO详细信息: \n" + poDetails);
-*/
+// Step 4: Confirm with user and save the PO
+        System.out.println("\n您已添加以下物品：");
+        for (Map.Entry<String, Map<String, String>> entry : itemsForNewPO.entrySet()) {
+            String itemCode = entry.getKey();
+            Map<String, String> itemDetails = entry.getValue();
+            System.out.println("Item Code: " + itemCode + ", Item Name: " + itemDetails.get("ItemName") + ", Quantity: " + itemDetails.get("Quantity"));
+        }
 
-/*// 8. 确认并保存PO
-        System.out.print("\n确认生成PO? (yes/no): ");*/
- /*       String confirmChoice = scanner.nextLine();
+        System.out.print("\n您确定要生成 PO 吗？(yes/no): ");
+        String confirmChoice = scanner.nextLine().trim();
         if ("yes".equalsIgnoreCase(confirmChoice)) {
-            // 在用户确认生成PO之前，先更新PR中的数量
-            updatePRQuantities(selectedPRID, itemsToBeAddedToPO, prDAO);
+            // Create a new PurchaseOrder object
+            PurchaseOrder newPO = new PurchaseOrder();
+            String newPOID = "PO" + String.format("%03d", poDAO.getNextPOID());  // Assuming you have a method to get the next unique PO ID
+            newPO.setPOID(newPOID);
+            newPO.setPRID(selectedPRID);
+            newPO.setCreatedBy("CurrentUserName");  // Replace with the username of the person who is currently logged in
+            newPO.setCreationDate("CurrentDate");  // Replace with the current date
+            newPO.setItems(itemsForNewPO);
 
-            // 创建 PurchaseOrder 对象
-*//*
-            PurchaseOrder newPO = createPOFromDetails(poDetails);
-*//*
+            // Set the total amount
+            newPO.setTotalAmount(totalAmount);
 
-            poDAO.savePurchaseOrder(newPO);
-            System.out.println("PO 已成功生成!");
+            // Save the new PO
+            boolean success = poDAO.savePurchaseOrder(newPO);
+            if (success) {
+                System.out.println("PO 成功生成!");
+                // 显示新生成的 PO 的详细信息
+                displayPODetails(newPOID, poDAO);  // 注意这里使用了新生成的 PO 的 ID
 
-            // 更新PR的poStatus为true
-            prDAO.updatePOStatus(selectedPRID, true);*/
-        }
-/*    }*/
-
-    private void updatePRQuantities(String prID, List<String> items, PurchaseRequisitionDAO prDAO) {
-        List<String> allPrDetails = prDAO.getAllPRs();
-
-        for (String item : items) {
-            String[] itemDetails = item.split("\\$");
-            String itemCode = itemDetails[1];
-            int newQuantity = Integer.parseInt(itemDetails[5]);
-
-            String matchingDetail = allPrDetails.stream()
-                    .filter(detail -> detail.startsWith(prID + "$" + itemCode + "$"))
-                    .findFirst().orElse(null);
-
-            if (matchingDetail != null) {
-                String[] details = matchingDetail.split("\\$");
-                details[5] = String.valueOf(newQuantity);  // Update the quantity
-                String updatedDetail = String.join("$", details);
-
-                int indexToUpdate = allPrDetails.indexOf(matchingDetail);
-                allPrDetails.set(indexToUpdate, updatedDetail);
+                // 更新 PRDetails.txt 中的 PO 状态
+                boolean updateStatusSuccess = prDAO.updatePOStatus(selectedPRID, true);
+                if (updateStatusSuccess) {
+                    System.out.println("PO 状态成功更新!");
+                } else {
+                    System.out.println("更新 PO 状态时出错。");
+                }
+            } else {
+                System.out.println("生成 PO 时出错。");
             }
         }
-
-        prDAO.saveUpdatedPRDetails(allPrDetails);
     }
 
-    private Map<Integer, String> displaySelectablePRs(List<String> allPRs) {
+    public Map<Integer, String> displaySelectablePRs(List<String> allPRs) {
+        Scanner scanner = new Scanner(System.in);
         Map<Integer, String> prMap = new HashMap<>();
-        int index = 1;
 
+        HashSet<String> uniquePRIDs = new HashSet<>();
+
+        // 提取所有唯一的 PR IDs
         for (String prDetail : allPRs) {
-            String prID = prDetail.split("\\$")[0];
-            if (!prMap.containsValue(prID)) {
-                System.out.println(index + ". " + prID);
-                prMap.put(index, prID);
-                index++;
-            }
+            String[] fields = prDetail.split("\\$");
+            uniquePRIDs.add(fields[0]);
+        }
+
+        System.out.println("可选择的PR列表：");
+        int index = 1;
+        for (String prID : uniquePRIDs) {
+            System.out.println(index + ". " + prID);
+            prMap.put(index, prID);
+            index++;
         }
 
         return prMap;
     }
 
+    private int totalAmount;  // 添加这一行来存储总金额。
 
-    public void editPRBeforeGeneratingPO(String selectedPR, PurchaseRequisitionDAO prDAO, SupplierDAO supplierDAO) {
-        // TODO: Implementation needed
+    public int getTotalAmount() {
+        return totalAmount;
     }
+
+    public void setTotalAmount(int totalAmount) {
+        this.totalAmount = totalAmount;
+    }
+
+    public void displayPODetails(String poID, PurchaseOrderDAO poDAO) {
+        List<String> poDetails = poDAO.getPODetails(poID);
+
+        // Print Purchase Order details
+        System.out.println("=======================================");
+        System.out.println("========= Purchase Order Details ======");
+        System.out.println("=======================================");
+        // Assume the first detail contains public information; adjust based on actual data format
+        String[] firstDetailArray = poDetails.get(0).split("\\$");
+        System.out.println("PO ID: " + poID);
+        System.out.println("Related PR ID: " + firstDetailArray[1]);
+        System.out.println("Creation Date: " + firstDetailArray[2]);
+        System.out.println("Created By: " + firstDetailArray[3]);
+        System.out.println("---------------------------------------");
+
+        // Print each item's detailed information
+        for (String detail : poDetails) {
+            String[] detailsArray = detail.split("\\$");
+            System.out.println("------------------------------");
+            System.out.println("Item Code: " + detailsArray[4]);
+            System.out.println("Product Name: " + detailsArray[5]);
+            System.out.println("Category: " + detailsArray[6]);
+            System.out.println("Price: " + detailsArray[7]);
+            System.out.println("Quantity: " + detailsArray[8]);
+            System.out.println("Supplier Code: " + detailsArray[9]);
+            System.out.println("Supplier Name: " + detailsArray[10]);
+            System.out.println("Supplier Contact: " + detailsArray[11]);
+            System.out.println("Expected Arrival Days: " + detailsArray[12]);
+            System.out.println("------------------------------");
+        }
+
+        // Print total amount; this can be calculated based on your actual data
+        System.out.println("Total Amount: [Calculate based on item details]");
+        System.out.println("=======================================");
+    }
+
+    public void displayPOList(PurchaseOrderDAO poDAO) {
+        List<String> allPOs = poDAO.getAllPOs();
+        List<String> poIDs = new ArrayList<>();
+        Map<Integer, String> poMenu = new HashMap<>();
+        Scanner scanner = new Scanner(System.in);
+
+        for (String po : allPOs) {
+            String poID = po.split("\\$")[0];
+            if (poID != null && !poID.isEmpty() && !poID.equals("null")) {
+                if (!poIDs.contains(poID)) {
+                    poIDs.add(poID);
+                }
+            }
+        }
+
+        while (true) {
+            System.out.println("\nAvailable POs:");
+            int counter = 1;
+            for (String poID : poIDs) {
+                System.out.println(counter + ". " + poID);
+                poMenu.put(counter, poID);
+                counter++;
+            }
+
+            System.out.print("\nEnter the number of PO to view details (or 'exit' to finish): ");
+            String choice = scanner.nextLine().trim();
+
+            if ("exit".equalsIgnoreCase(choice)) {
+                break;
+            }
+
+            try {
+                int chosenNumber = Integer.parseInt(choice);
+                if (poMenu.containsKey(chosenNumber)) {
+                    displayPODetails(poMenu.get(chosenNumber), poDAO);
+                } else {
+                    System.out.println("\nInvalid choice. Please select a valid number.\n");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("\nInvalid input. Please enter a number.\n");
+            }
+        }
+    }
+
 }

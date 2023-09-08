@@ -2,11 +2,10 @@ package data;
 
 import domain.PurchaseRequisition;
 import java.io.*;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
+import utility.Utility;
 
 public class PurchaseRequisitionDAO {
     private static final String FILE_PATH = "PRDetails.txt"; // Path to the text file where PR data is stored
@@ -177,34 +176,50 @@ public class PurchaseRequisitionDAO {
         return editablePRs;
     }
 
-    /**
-     * 更新给定 PR 的 poStatus
-     * @param pr The PR to update
-     * @param status The new status
-     */
-    public void updatePOStatus(String pr, boolean status) {
-        List<String> allPRs = new ArrayList<>();
-        String updatedPR = pr.substring(0, pr.lastIndexOf("$")) + "$" + status;
+    public boolean updatePOStatus(String prID, boolean status) {
+        List<String> lines = new ArrayList<>();
+        File file = new File(FILE_PATH);
 
-        try (BufferedReader br = new BufferedReader(new FileReader("PRDetails.txt"))) {
-            allPRs = br.lines().collect(Collectors.toList());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        int prIndex = allPRs.indexOf(pr);
-        if (prIndex != -1) {
-            allPRs.set(prIndex, updatedPR);
-        }
-
-        try (PrintWriter pw = new PrintWriter(new FileWriter("PRDetails.txt"))) {
-            for (String line : allPRs) {
-                pw.println(line);
+        // Reading the file
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                lines.add(line);
             }
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
         }
+
+        // Update the lines
+        boolean updated = false;
+        for (int i = 0; i < lines.size(); i++) {
+            String[] fields = lines.get(i).split("\\$");
+            if (fields[0].equals(prID)) {
+                fields[fields.length - 1] = status ? "true" : "false";
+                lines.set(i, String.join("$", fields));
+                updated = true;
+            }
+        }
+
+        // Write back to the file if updated
+        if (updated) {
+            try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
+                for (String line : lines) {
+                    bw.write(line);
+                    bw.newLine();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+
+        return updated;
     }
+
+
+
 
     public void updateItemQuantityInPR(String prID, String itemCode, int newQuantity) {
         // Load all PR details from file
@@ -233,4 +248,39 @@ public class PurchaseRequisitionDAO {
         saveUpdatedPRDetails(allPrDetails);
     }
 
+    public void updatePRDetails(String selectedPRID, List<String> itemsToBeAddedToPO) {
+        // 从文件或其他数据源中读取原有的 PRDetails
+        List<String> originalDetails = getPRDetails(selectedPRID);
+
+        // 创建一个新的 List 来存储更新后的 details
+        List<String> updatedDetails = new ArrayList<>();
+
+        for (String originalDetail : originalDetails) {
+            String[] originalArray = originalDetail.split("\\$");
+            String originalItemCode = originalArray[1];
+
+            // 查找是否有对应的新 detail
+            String newItemDetail = itemsToBeAddedToPO.stream()
+                    .filter(item -> item.split("\\$")[1].equals(originalItemCode))
+                    .findFirst().orElse(null);
+
+            if (newItemDetail != null) {
+                // 替换为新的 detail
+                updatedDetails.add(newItemDetail);
+            } else {
+                // 保留原有的 detail
+                updatedDetails.add(originalDetail);
+            }
+        }
+
+        // 现在，你可以将 updatedDetails 写回到 PRDetails.txt 文件或其他数据源中
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter("PRDetails.txt", false))) {  // false 表示不追加，而是覆盖文件
+            for (String updatedDetail : updatedDetails) {
+                bw.write(updatedDetail);
+                bw.newLine();
+            }
+        } catch (IOException e) {
+            System.out.println("An error occurred while writing to PRDetails.txt: " + e.getMessage());
+        }
+    }
 }
