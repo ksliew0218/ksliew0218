@@ -1,6 +1,6 @@
 package view;
 
-import data.PurchaseRequisitionDAO;
+import data.*;
 import domain.*;
 import utility.Utility;
 
@@ -11,7 +11,7 @@ public class View {
         char choice;
         do {
             System.out.println("Welcome to SIGMA SDN BHD (SSB)");
-            System.out.println("\t\t\t1. Login");
+            System.out.println("\n\t\t\t1. Login");
             System.out.println("\t\t\t2. Register");
             System.out.println("\t\t\t3. Exit");
             System.out.print("Please Select a number: ");
@@ -41,7 +41,7 @@ public class View {
         char choice;
         Item item = new Item();
         do {
-            System.out.println("\t\t\t1. Add item");
+            System.out.println("\n\t\t\t1. Add item");
             System.out.println("\t\t\t2. Delete item");
             System.out.println("\t\t\t3. Edit item");
             System.out.println("\t\t\t4. Search item by Name");
@@ -72,7 +72,7 @@ public class View {
         char choice;
         Supplier supplier = new Supplier();
         do {
-            System.out.println("\t\t\t1. Add Supplier");
+            System.out.println("\n\t\t\t1. Add Supplier");
             System.out.println("\t\t\t2. Delete Supplier");
             System.out.println("\t\t\t3. Edit Supplier");
             System.out.println("\t\t\t4. Search Supplier by Supplier Name");
@@ -86,7 +86,7 @@ public class View {
                 case '1' -> supplier.add();
                 case '2' -> supplier.delete();
                 case '3' -> supplier.edit();
-                //case '4' -> supplier.searchSupplierByID();
+                case '4' -> supplier.searchSupplierByID();
                 case '5' -> supplier.view();
                 case '6' -> {
                     System.out.println("Exiting supplier entry menu.");
@@ -126,24 +126,41 @@ public class View {
         } while (true);
     }
 
-/*    public void CreatePrMenu() {
+    public void CreatePrMenu() {
         char choice;
-        PurchaseRequisition pr = new PurchaseRequisition();
+        ItemDAO itemDAO = new ItemDAO();
+        SupplierDAO supplierDAO = new SupplierDAO();
+        PurchaseRequisitionDAO prDAO = new PurchaseRequisitionDAO();
+
         do {
-            System.out.println("\n\t\t\t1. Manually Create New Purchase Requisition");
-            System.out.println("\t\t\t2. Auto-Generate Purchase Requisition");
+            System.out.println("\n\t\t\t1. Auto-Generate Purchase Requisition");
+            System.out.println("\t\t\t2. Manually Create New Purchase Requisition");
             System.out.println("\t\t\t3. Display All Purchase Requisitions");
-            System.out.println("\t\t\t4. Search Daily Sales Entry by Date");
+            System.out.println("\t\t\t4. Edit Purchase Requisitions");
             System.out.println("\t\t\t5. Back");
 
             System.out.print("Please enter your choice: ");
             choice = Utility.readChar();
 
             switch (choice) {
-                case '1' -> pr.add();
-                case '2' -> pr.delete();
-                case '3' -> pr.edit();
-                case '4' -> pr.searchByDate();
+                case '1' -> {
+                    PurchaseRequisition prAuto = new PurchaseRequisition();
+                    String AutoResult = prAuto.autoGeneratePR(itemDAO, supplierDAO, prDAO);
+                    System.out.println(AutoResult);
+                }
+                case '2' -> {
+                    PurchaseRequisition prManual = new PurchaseRequisition();
+                    String MnResult = prManual.manualGeneratePR(itemDAO, supplierDAO, prDAO);
+                    System.out.println(MnResult);
+                }
+                case '3' -> {
+                    PurchaseRequisition pr = new PurchaseRequisition();
+                    pr.displayPRList(prDAO);
+                }
+                case '4' -> {
+                    PurchaseRequisition pr = new PurchaseRequisition();
+                    pr.editMenu(itemDAO, supplierDAO, prDAO);
+                }
                 case '5' -> {
                     System.out.println("Exiting purchase requisition menu.");
                     return;
@@ -151,7 +168,8 @@ public class View {
                 default -> System.out.println("Invalid choice. Please try again.");
             }
         } while (true);
-    }*/
+    }
+
 
     public void admin_menu()
     {
@@ -159,7 +177,7 @@ public class View {
         int exit = 0;
         do
         {
-            System.out.println("0. Personal Information");
+            System.out.println("\n0. Personal Information");
             System.out.println("1. Check all applicant information");
             System.out.println("2. Search User");
             System.out.println("3. Approve Or Reject Applicant");
@@ -200,14 +218,17 @@ public class View {
         do
         {
             System.out.println(
-                    "0. Personal Information" + "\n" +
-                    "1. Item Entry (Add/Save/Delete/Edit)" + "\n" +
-                            "2. Supplier Entry (Add/Save/Delete/Edit)" + "\n" +
-                            "3. Daily Item-wise Sales Entry (Add/Save/Delete/Edit)" + "\n" +
-                            "4. Create a Purchase Requisition (Add/Save/Delete/Edit)" + "\n" +
-                            "5. Display Requisition (View)" + "\n" +
-                            "6. List of Purchaser Orders(View)" + "\n" +
-                            "7. Exit" + "\n");
+                    """
+
+                            0. Personal Information
+                            1. Item Entry (Create/Read/Update/Edit)
+                            2. Supplier Entry (Create/Read/Update/Edit)
+                            3. Daily Item-wise Sales Entry (Create/Read/Update/Edit)
+                            4. Create a Purchase Requisition (Create/Read/Update/Edit)
+                            5. Display Requisition (View)
+                            6. List of Purchaser Orders(View)
+                            7. Back
+                            """);
             System.out.print("Please input a number: ");
             Scanner input_admin = new Scanner(System.in);
             char menu_sales_manahger;
@@ -219,10 +240,13 @@ public class View {
                     PI.PersonalInfo();
                     break;
                 case '1':
+                    ItemEntryMenu();
                     break;
                 case '2':
+                    SupplierEntryMenu();
                     break;
                 case '3':
+                    DailySalesEntryMenu();
                     break;
                 case '4':
                     break;
@@ -246,13 +270,16 @@ public class View {
         do
         {
             System.out.println(
-                    "0. Personal Information" + "\n" +
-                    "1. List of Items (View)" + "\n" +
-                            "2. List of Suppliers (View)" + "\n" +
-                            "3. Display Requisition (View)" + "\n" +
-                            "4. Generate Purchase Order (Add/Save/Delete/Edit)" + "\n" +
-                            "5. List of Purchaser Orders (View)" + "\n" +
-                            "6. Exit" + "\n");
+                    """
+
+                            0. Personal Information
+                            1. List of Items (View)
+                            2. List of Suppliers (View)
+                            3. Display Requisition (View)
+                            4. Generate Purchase Order (Add/Save/Delete/Edit)
+                            5. List of Purchaser Orders (View)
+                            6. Exit
+                            """);
             System.out.print("Please select a number: ");
             Scanner input_admin = new Scanner(System.in);
             char menu_sales_manahger;
@@ -264,8 +291,10 @@ public class View {
                     PI.PersonalInfo();
                     break;
                 case '1':
+                    new Item().view();
                     break;
                 case '2':
+                    new Supplier().view();
                     break;
                 case '3':
                     break;

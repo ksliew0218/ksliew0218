@@ -265,5 +265,36 @@ public class SupplierDAO {
         return null;
     }
 
+    public List<String> getAllSuppliers() {
+        List<String> suppliers = new ArrayList<>();
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                suppliers.add(line);
+            }
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return suppliers;
+    }
+
+    public List<String> getSuppliersForItem(String itemCode) {
+        List<String> suppliersForItem = new ArrayList<>();
+        List<String> allSuppliers = getAllSuppliers();
+
+        for (String supplier : allSuppliers) {
+            String[] details = supplier.split("\\$");
+            if (details[3].equals(itemCode)) {  // Assuming the itemCode is at index 3 in supplier details
+                suppliersForItem.add(supplier);
+            }
+        }
+
+        return suppliersForItem;
+    }
+
+
+
 }
 

@@ -331,6 +331,19 @@ public class ItemDAO {
         return true;
     }
 
-
+    public List<String> getAllItems() {
+        List<String> items = new ArrayList<>();
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader("item.txt"));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                items.add(line);
+            }
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return items;
+    }
 
 }
