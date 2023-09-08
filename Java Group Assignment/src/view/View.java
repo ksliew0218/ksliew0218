@@ -151,7 +151,8 @@ public class View {
             System.out.println("\t\t\t2. Manually Create New Purchase Requisition");
             System.out.println("\t\t\t3. Display All Purchase Requisitions");
             System.out.println("\t\t\t4. Edit Purchase Requisitions");
-            System.out.println("\t\t\t5. Back");
+            System.out.println("\t\t\t5. Delete Purchase Requisitions");
+            System.out.println("\t\t\t6. Back");
 
             System.out.print("Please enter your choice: ");
             choice = Utility.readChar();
@@ -176,6 +177,10 @@ public class View {
                     pr.editMenu(itemDAO, supplierDAO, prDAO);
                 }
                 case '5' -> {
+                    PurchaseRequisition pr = new PurchaseRequisition();
+                    pr.editMenu(itemDAO, supplierDAO, prDAO);
+                }
+                case '6' -> {
                     System.out.println("Exiting purchase requisition menu.");
                     return;
                 }
@@ -208,6 +213,9 @@ public class View {
                     break;
                 case '2':
                     poInstance.displayPOList(poDAO);
+                    break;
+                case '3':
+                    poInstance.deletePO(poDAO);
                     break;
                 case '4':
                     System.out.println("Exiting purchase order menu.");

@@ -1,4 +1,3 @@
-PO002$PR003$IT006$Nuggets$food$1$20$SP005$KSliew SDN BHD$0182973919$2$CurrentUserName$CurrentDate$20$true
 PO004$PR003$IT006$Nuggets$food$1$20$SP005$KSliew SDN BHD$0182973919$2$CurrentUserName$CurrentDate$60$false
 PO004$PR003$IT004$Fries$Food$2$20$SP004$Rong Sheng SDN BHD$01919191919$4$CurrentUserName$CurrentDate$60$false
 PO005$PR003$IT006$Nuggets$food$1$20$SP005$KSliew SDN BHD$0182973919$2$CurrentUserName$CurrentDate$60$false

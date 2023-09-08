@@ -606,38 +606,5 @@ public class PurchaseRequisition {
         }
     }
 
-    public void displayPRDetailsForPO(String prID, PurchaseRequisitionDAO prDAO, Set<String> excludedItemCodes) {
-        List<String> prDetails = prDAO.getPRDetails(prID);
-
-        // 打印购买申请的标题和公共信息
-        System.out.println("------ Purchase Requisition Details ------");
-        System.out.println("PR ID: " + prID);
-        // 假设第一个详细信息包含公共信息，可以根据实际数据格式进行调整
-        String[] firstDetailArray = prDetails.get(0).split("\\$");
-        System.out.println("Creation Date: " + firstDetailArray[10]);
-        System.out.println("Created By: " + firstDetailArray[9]);
-        System.out.println("PO Status: " + (firstDetailArray[12].equals("true") ? "Converted to PO" : "Not yet converted to PO"));
-        System.out.println();
-
-        // 打印每个物品的详细信息（排除 excludedItemCodes 中的项）
-        for (String detail : prDetails) {
-            String[] detailsArray = detail.split("\\$");
-            if (excludedItemCodes.contains(detailsArray[1])) {
-                continue;  // 跳过这个 item code
-            }
-            System.out.println("------------------------------");
-            System.out.println("Item Code: " + detailsArray[1]);
-            System.out.println("Product Name: " + detailsArray[2]);
-            System.out.println("Category: " + detailsArray[3]);
-            System.out.println("Supplier Code: " + detailsArray[6]);
-            System.out.println("Supplier Name: " + detailsArray[7]);
-            System.out.println("Current Stock: " + detailsArray[4]);
-            System.out.println("Recommended quantity: " + detailsArray[5]);
-            System.out.println("Supplier Contact: " + detailsArray[8]);
-            System.out.println("Expected Arrival Days: " + detailsArray[11]);
-            System.out.println("------------------------------");
-        }
-    }
-
 }
 

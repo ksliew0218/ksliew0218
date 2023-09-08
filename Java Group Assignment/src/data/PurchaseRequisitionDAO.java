@@ -283,4 +283,34 @@ public class PurchaseRequisitionDAO {
             System.out.println("An error occurred while writing to PRDetails.txt: " + e.getMessage());
         }
     }
+
+    public boolean deletePO(String poID) {
+        File inputFile = new File(FILE_PATH);
+        File tempFile = new File("tempFile.txt");
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(inputFile));
+             BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile))) {
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (!line.startsWith(poID + "$")) {
+                    writer.write(line);
+                    writer.newLine();
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        if (!inputFile.delete()) {
+            System.out.println("Could not delete original file");
+            return false;
+        }
+        if (!tempFile.renameTo(inputFile)) {
+            System.out.println("Could not rename temp file");
+            return false;
+        }
+        return true;
+    }
 }
