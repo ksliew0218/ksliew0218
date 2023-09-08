@@ -25,7 +25,6 @@ public class PurchaseRequisition {
     private List<Map<String, String>> prDetailsList = new ArrayList<>();
 
     public PurchaseRequisition() {
-        System.out.println("Creating a new Purchase Requisition...");
         this.salesManagerID = Login.getLoggedInUsername(); // 直接从Login类获取当前登录的用户名
     }
 
@@ -172,6 +171,7 @@ public class PurchaseRequisition {
             }
         }
 
+        System.out.println("\nCreating Purchase Purchase Requisition...");
         StringBuilder feedbackForPMFormatted = new StringBuilder("\n------ Purchase Requisition Details ------\n");
         feedbackForPMFormatted.append("PR ID: ").append(prID).append("\n");
         feedbackForPMFormatted.append("Creation Date: ").append(creationDate).append("\n");
@@ -249,8 +249,16 @@ public class PurchaseRequisition {
                 continue;
             }
 
-            System.out.print("\nEnter the required quantity for item " + itemCode + ": ");
-            int requiredQuantity = Integer.parseInt(scanner.nextLine().trim());  // 读取并转换为整数
+            int requiredQuantity = 0;  // 初始化变量
+            while (true) {  // 循环直到获取有效输入
+                try {
+                    System.out.print("\nEnter the recommend quantity for item " + itemCode + ": ");
+                    requiredQuantity = Integer.parseInt(scanner.nextLine().trim());  // 读取并转换为整数
+                    break;  // 如果转换成功，退出循环
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid input. Please enter a number.");  // 输出错误信息
+                }
+            }
 
             String selectedItem = itemDict.get(itemCode);
             String[] selectedItemDetails = selectedItem.split("\\$");
@@ -275,7 +283,7 @@ public class PurchaseRequisition {
                 prDetailsList.add(prDetails);
             }
 
-            System.out.println("\nItem " + selectedItemDetails[1] + " with quantity " + requiredQuantity + " added to PR.\n");
+            System.out.println("\nItem " + selectedItemDetails[1] + " with recommend quantity " + requiredQuantity + " added to PR.\n");
         }
         return prDetailsList;
     }
@@ -310,6 +318,7 @@ public class PurchaseRequisition {
         }
 
         // Construct feedback for the Purchase Manager
+        System.out.println("\nCreating a new Purchase Requisition...");
         StringBuilder feedbackForPM = new StringBuilder("\n------ Purchase Requisition Details ------\n");
         feedbackForPM.append("PR ID: ").append(prID).append("\n");
         feedbackForPM.append("Creation Date: ").append(creationDate).append("\n");
@@ -376,7 +385,7 @@ public class PurchaseRequisition {
         List<String> prDetails = prDAO.getPRDetails(prID);
 
         // 打印购买申请的标题和公共信息
-        System.out.println("------ Purchase Requisition Details ------");
+        System.out.println("\n------ Purchase Requisition Details ------");
         System.out.println("PR ID: " + prID);
         // 假设第一个详细信息包含公共信息，可以根据实际数据格式进行调整
         String[] firstDetailArray = prDetails.get(0).split("\\$");
@@ -453,7 +462,7 @@ public class PurchaseRequisition {
             return;
         }
 
-        System.out.print("Enter the new quantity for the item: ");
+        System.out.print("Enter the new recommend quantity for the item: ");
         int newQuantity;
         try {
             newQuantity = Integer.parseInt(scanner.nextLine().trim());
@@ -462,11 +471,9 @@ public class PurchaseRequisition {
             return;
         }
 
-        // Preview the updated PR details
         String[] details = matchingDetail.split("\\$");
         details[5] = String.valueOf(newQuantity);  // Assuming the 6th field is the quantity
         String updatedDetail = String.join("$", details);
-        System.out.println("Updated PR details: " + updatedDetail);
 
         // Confirm the changes
         System.out.print("Do you confirm the changes? (yes/no): ");
@@ -482,7 +489,7 @@ public class PurchaseRequisition {
 
         // Save the entire list (with all PR details) back to the file
         prDAO.saveUpdatedPRDetails(allPrDetailsFromFile);
-        System.out.println("Quantity for item " + itemCode + " in PR " + selectedPRID + " updated to " + newQuantity);
+        System.out.println("Quantity for item " + itemCode + " in " + selectedPRID + " updated to " + newQuantity);
     }
 
     private void deleteItem(String selectedPRID, PurchaseRequisitionDAO prDAO) {
@@ -503,9 +510,6 @@ public class PurchaseRequisition {
             return;
         }
 
-        // Display the details of the item to be deleted
-        System.out.println("Details of the item to be deleted: " + matchingDetail);
-
         System.out.print("Are you sure you want to delete this item? (yes/no): ");
         String confirmation = scanner.nextLine().trim().toLowerCase();
         if ("yes".equals(confirmation)) {
@@ -522,12 +526,11 @@ public class PurchaseRequisition {
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
-            System.out.println("\nEdit Purchase Requisition Menu:");
-            System.out.println("1. Edit Supplier");
-            System.out.println("2. Edit Item Quantity");
-            System.out.println("3. Delete Item");
-            System.out.println("4. Add Item");
-            System.out.println("5. Exit");
+            System.out.println("\n\t\t\tEdit Purchase Requisition Menu:");
+            System.out.println("\n\t\t\t1. Edit Item Quantity");
+            System.out.println("\t\t\t2. Add Item");
+            System.out.println("\t\t\t3. Delete Item");
+            System.out.println("\t\t\t4. Exit");
             System.out.print("Enter your choice: ");
 
 
@@ -539,7 +542,7 @@ public class PurchaseRequisition {
                 continue;
             }
 
-            if (choice >= 1 && choice <= 4) {
+            if (choice >= 1 && choice <= 3) {
                 List<String> allPRs = prDAO.getAllPRs();
                 List<String> prIDs = new ArrayList<>();
                 Map<Integer, String> prMenu = new HashMap<>();
@@ -582,23 +585,15 @@ public class PurchaseRequisition {
                 displayPRDetails(selectedPRID, prDAO);
 
                 switch (choice) {
-                    case 1:
-                        break;
-                    case 2:
-                        editItemQuantity(selectedPRID, prDAO);
-                        break;
-                    case 3:
-                        deleteItem(selectedPRID, prDAO);
-                        break;
-                    case 4:
-                        addItem(selectedPRID, itemDAO, supplierDAO, prDAO);
-                        break;
-                    default:
+                    case 1 -> editItemQuantity(selectedPRID, prDAO);
+                    case 2 -> addItem(selectedPRID, itemDAO, supplierDAO, prDAO);
+                    case 3 -> deleteItem(selectedPRID, prDAO);
+                    default -> {
                         System.out.println("Invalid choice. Please select a number between 1 and 5.");
                         continue;
+                    }
                 }
-
-            } else if (choice == 5) {
+            } else if (choice == 4) {
                 return;
             } else {
                 System.out.println("Invalid choice. Please select a number between 1 and 5.");
@@ -606,7 +601,70 @@ public class PurchaseRequisition {
         }
     }
 
+    public void deletePR(PurchaseRequisitionDAO prDAO) {
+        Scanner scanner = new Scanner(System.in);
+        List<String> allPRs = prDAO.getAllPRs();
+        List<String> prIDs = new ArrayList<>();
+        Map<Integer, String> prMenu = new HashMap<>();
 
+        // Extract PR IDs
+        for (String pr : allPRs) {
+            String prID = pr.split("\\$")[0];
+            if (prID != null && !prID.isEmpty() && !prID.equals("null")) {
+                if (!prIDs.contains(prID)) {
+                    prIDs.add(prID);
+                }
+            }
+        }
+
+        while (true) {  // Keep running until user chooses to exit
+            System.out.println("\nAvailable PRs:");
+            int counter = 1;
+            for (String prID : prIDs) {
+                System.out.println(counter + ". " + prID);
+                prMenu.put(counter, prID);
+                counter++;
+            }
+
+            System.out.print("\nEnter the number of PR to delete (or 'exit' to finish): ");
+            String choice = scanner.nextLine().trim();
+
+            if ("exit".equalsIgnoreCase(choice)) {
+                break;
+            }
+
+            try {
+                int chosenNumber = Integer.parseInt(choice);
+                if (prMenu.containsKey(chosenNumber)) {
+                    String selectedPRID = prMenu.get(chosenNumber);
+
+                    // Display details of the selected PR (if you have such a method)
+                    displayPRDetails(selectedPRID, prDAO);
+
+                    System.out.print("Are you sure you want to delete this PR? (yes/no): ");
+                    String confirm = scanner.nextLine().trim();
+
+                    if ("yes".equalsIgnoreCase(confirm)) {
+                        // Delete the selected PR
+                        boolean success = prDAO.deletePR(selectedPRID);
+                        if (success) {
+                            System.out.println("PR successfully deleted.");
+                            prIDs.remove(selectedPRID);  // Remove the deleted PR ID from the list
+                            break;  // Exit the loop
+                        } else {
+                            System.out.println("An error occurred while deleting the PR.");
+                        }
+                    } else {
+                        System.out.println("PR deletion cancelled.");
+                    }
+                } else {
+                    System.out.println("\nInvalid choice. Please select a valid number.\n");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("\nInvalid input. Please enter a number.\n");
+            }
+        }
+    }
 
 }
 

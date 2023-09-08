@@ -65,13 +65,22 @@ public class PurchaseOrder {
         // Step 1: Display all available PRs and let user select one
         List<String> allEditablePRs = prDAO.getAllEditablePRs();
         Map<Integer, String> prMap = displaySelectablePRs(allEditablePRs);
-        System.out.print("请选择要生成PO的PR编号: ");
-        int selectedPRIndex = scanner.nextInt();
-        scanner.nextLine();
+        int selectedPRIndex = -1;
+        while (true) {
+            System.out.print("\nPlease select the PR number for which you want to generate a PO: ");
+            try {
+                selectedPRIndex = scanner.nextInt();
+                scanner.nextLine();  // Consume newline
 
-        if (!prMap.containsKey(selectedPRIndex)) {
-            System.out.println("选择无效!");
-            return;
+                if (!prMap.containsKey(selectedPRIndex)) {
+                    System.out.println("Invalid Input! Please enter a valid number.");
+                    continue;
+                }
+                break;  // Break the loop if valid input
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input. Please enter a number.");
+                scanner.next();  // Consume invalid token
+            }
         }
 
         String selectedPRID = prMap.get(selectedPRIndex);
@@ -79,12 +88,12 @@ public class PurchaseOrder {
 
         while (true) {
             // Step 2: Display details of the selected PR
-            System.out.println("\n选中的PR详细信息: \n");
+            System.out.println("\n------ Purchase Requisition Details ------: \n");
             PurchaseRequisition pr = new PurchaseRequisition();
             pr.displayPRDetails(selectedPRID, prDAO);
 
             // Step 3: Let user select an item code and quantity
-            System.out.print("请输入要加入到PO的item code (或 'exit' 退出): ");
+            System.out.print("Please enter the item code you want to add to the PO (or 'exit' to quit): ");
             String itemCode = scanner.nextLine().trim();
 
             if ("exit".equalsIgnoreCase(itemCode)) {
@@ -96,13 +105,13 @@ public class PurchaseOrder {
                     .findFirst().orElse(null);
 
             if (matchingDetail == null) {
-                System.out.println("此PR中找不到该item code。");
+                System.out.println("Item Code not found");
                 continue;
             }
 
             String[] itemDetails = matchingDetail.split("\\$");
-            System.out.println("推荐数量: " + itemDetails[5]);
-            System.out.print("请输入新的数量 (或按Enter使用推荐数量): ");
+            System.out.println("Recommend Quantity: " + itemDetails[5]);
+            System.out.print("Enter Order Quantity (Or press 'Enter' to use recommend quantity): ");
             int newQuantity = Utility.readInt(Integer.parseInt(itemDetails[5]));
 
             // Add to itemsForNewPO
@@ -122,14 +131,14 @@ public class PurchaseOrder {
         }
 
 // Step 4: Confirm with user and save the PO
-        System.out.println("\n您已添加以下物品：");
+        System.out.println("\nYou have added the following items：");
         for (Map.Entry<String, Map<String, String>> entry : itemsForNewPO.entrySet()) {
             String itemCode = entry.getKey();
             Map<String, String> itemDetails = entry.getValue();
             System.out.println("Item Code: " + itemCode + ", Item Name: " + itemDetails.get("ItemName") + ", Quantity: " + itemDetails.get("Quantity"));
         }
 
-        System.out.print("\n您确定要生成 PO 吗？(yes/no): ");
+        System.out.print("\nAre you sure you want to generate a PO? (yes/no): ");
         String confirmChoice = scanner.nextLine().trim();
         if ("yes".equalsIgnoreCase(confirmChoice)) {
             // Create a new PurchaseOrder object
@@ -147,19 +156,17 @@ public class PurchaseOrder {
             // Save the new PO
             boolean success = poDAO.savePurchaseOrder(newPO);
             if (success) {
-                System.out.println("PO 成功生成!");
-                // 显示新生成的 PO 的详细信息
-                displayPODetails(newPOID, poDAO);  // 注意这里使用了新生成的 PO 的 ID
+                System.out.println("PO successfully generated!");
+                displayPODetails(newPOID, poDAO);
 
-                // 更新 PRDetails.txt 中的 PO 状态
                 boolean updateStatusSuccess = prDAO.updatePOStatus(selectedPRID, true);
                 if (updateStatusSuccess) {
-                    System.out.println("PO 状态成功更新!");
+                    System.out.println("PO status successfully updated!");
                 } else {
-                    System.out.println("更新 PO 状态时出错。");
+                    System.out.println("An error occurred while updating the PO status.");
                 }
             } else {
-                System.out.println("生成 PO 时出错。");
+                System.out.println("An error occurred while generating the PO.");
             }
         }
     }
@@ -176,7 +183,7 @@ public class PurchaseOrder {
             uniquePRIDs.add(fields[0]);
         }
 
-        System.out.println("可选择的PR列表：");
+        System.out.println("\nAvailable PR list: ");
         int index = 1;
         for (String prID : uniquePRIDs) {
             System.out.println(index + ". " + prID);
@@ -210,6 +217,7 @@ public class PurchaseOrder {
         System.out.println("Related PR ID: " + firstDetailArray[1]);
         System.out.println("Creation Date: " + firstDetailArray[2]);
         System.out.println("Created By: " + firstDetailArray[3]);
+        System.out.println("Stock In Status: " + (firstDetailArray[14].equals("true") ? "Done Stock In" : "Not yet Stock In"));
         System.out.println("---------------------------------------");
 
         // Print each item's detailed information
@@ -239,6 +247,12 @@ public class PurchaseOrder {
         Map<Integer, String> poMenu = new HashMap<>();
         Scanner scanner = new Scanner(System.in);
 
+        // 处理空文件或没有可用的POs
+        if (allPOs == null || allPOs.isEmpty()) {
+            System.out.println("No available POs.");
+            return;
+        }
+
         for (String po : allPOs) {
             String poID = po.split("\\$")[0];
             if (poID != null && !poID.isEmpty() && !poID.equals("null")) {
@@ -246,6 +260,12 @@ public class PurchaseOrder {
                     poIDs.add(poID);
                 }
             }
+        }
+
+        // 再次检查以确保poIDs也不是空的
+        if (poIDs.isEmpty()) {
+            System.out.println("No available POs.");
+            return;
         }
 
         while (true) {
@@ -276,6 +296,7 @@ public class PurchaseOrder {
             }
         }
     }
+
 
     public void deletePO(PurchaseOrderDAO poDAO) {
         Scanner scanner = new Scanner(System.in);

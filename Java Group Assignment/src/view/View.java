@@ -31,11 +31,6 @@ public class View {
         } while (choice != '3');
     }
 
-
-    public void SalesManagerMenu() {
-        System.out.println("testing");
-    }
-
     public void ItemEntryMenu() {
         char choice;
         Item item = new Item();
@@ -79,8 +74,6 @@ public class View {
             }
         } while (true);
     }
-
-
 
     public void SupplierEntryMenu() {
         char choice;
@@ -169,7 +162,8 @@ public class View {
                     System.out.println(MnResult);
                 }
                 case '3' -> {
-
+                    PurchaseRequisition pr = new PurchaseRequisition();
+                    pr.displayPRList(prDAO);
                 }
                 case '4' -> {
                     PurchaseRequisition pr = new PurchaseRequisition();
@@ -177,6 +171,7 @@ public class View {
                 }
                 case '5' -> {
                     PurchaseRequisition pr = new PurchaseRequisition();
+                    pr.deletePR(prDAO);
                 }
                 case '6' -> {
                     System.out.println("Exiting purchase requisition menu.");
@@ -278,7 +273,7 @@ public class View {
         int exit01 = 0;
         do
         {
-            System.out.println("\t\t\t---Sales Manger Menu---");
+            System.out.println("\t\t\t\n---Sales Manger Menu---");
             System.out.println(
                     """
 
@@ -286,10 +281,9 @@ public class View {
                             1. Item Entry (Create/Read/Update/Edit)
                             2. Supplier Entry (Create/Read/Update/Edit)
                             3. Daily Item-wise Sales Entry (Create/Read/Update/Edit)
-                            4. Create a Purchase Requisition (Create/Read/Update/Edit)
-                            5. Display Requisition (View)
-                            6. List of Purchaser Orders(View)
-                            7. Back
+                            4. Purchase Requisition
+                            5. List of Purchaser Orders
+                            6. Back
                             """);
             System.out.print("Please input a number: ");
             Scanner input_admin = new Scanner(System.in);
@@ -310,12 +304,14 @@ public class View {
                     DailySalesEntryMenu();
                     break;
                 case '4':
+                    CreatePrMenu();
                     break;
                 case '5':
+                    PurchaseOrderDAO poDAO = new PurchaseOrderDAO();
+                    PurchaseOrder poInstance = new PurchaseOrder();
+                    poInstance.displayPOList(poDAO);
                     break;
                 case '6':
-                    break;
-                case '7':
                     exit01 = 1;
                     break;
                 default:
@@ -328,9 +324,6 @@ public class View {
     public void Purchase_Manager_Menu()
     {
         int exit02 = 0;
-        ItemDAO itemDAO = new ItemDAO();
-        SupplierDAO supplierDAO = new SupplierDAO();
-        PurchaseRequisitionDAO prDAO = new PurchaseRequisitionDAO();
         do
         {
             System.out.println("\t---Purchase Manager Menu---");
@@ -360,6 +353,7 @@ public class View {
                     new Supplier().view();
                     break;
                 case '3':
+                    PurchaseRequisitionDAO prDAO = new PurchaseRequisitionDAO();
                     PurchaseRequisition pr = new PurchaseRequisition();
                     pr.displayPRList(prDAO);
                     break;

@@ -295,7 +295,7 @@ public class PurchaseRequisitionDAO {
             }
         }
 
-        // 将更新后的 PR 列表写回到文件
+        // Write the updated PR list back to the file
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
             for (String updatedPR : updatedPRs) {
                 writer.write(updatedPR);
@@ -307,6 +307,5 @@ public class PurchaseRequisitionDAO {
             return false;
         }
     }
-
 
 }
