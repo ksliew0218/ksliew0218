@@ -2,7 +2,10 @@ package domain;
 
 import data.SupplierDAO;
 import utility.Utility;
+
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 public class Supplier implements Entry {
     private String supplierId;
@@ -209,7 +212,6 @@ public class Supplier implements Entry {
         }
     }
 
-
     @Override
     public void view() {
         SupplierDAO supplierDAO = new SupplierDAO();
@@ -223,6 +225,32 @@ public class Supplier implements Entry {
         System.out.print("Enter the Supplier Name you want to search for: ");
         String supplierName = Utility.readString(30);
         supplierDAO.searchSupplierByName(supplierName);
-
     }
+    public void listOfSuppliers() {
+        SupplierDAO supplierDAO = new SupplierDAO();
+        List<String> suppliers = supplierDAO.getAllSuppliersDetails();
+
+        if (suppliers.isEmpty()) {
+            System.out.println("No suppliers found.");
+            return;
+        }
+
+        // Print table header
+        System.out.printf("%-15s %-20s %-15s %-25s %-50s %-20s %-15s%n",
+                "Supplier ID", "Supplier Name", "Contact", "Email", "Address", "Date of Association", "Delivery Day");
+
+        // Print divider line
+        System.out.println("-----------------------------------------------------------------------------------------------------------------------------------------------------------");
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");  // Assuming date is in this format
+
+        // Print each supplier's details in a new row
+        for (String supplierLine : suppliers) {
+            String[] fields = supplierLine.split("\\$");
+            System.out.printf("%-15s %-20s %-15s %-25s %-50s %-20s %-15s%n",
+                    fields[0], fields[1], fields[2], fields[3], fields[4], fields[5], fields[6]);
+        }
+    }
+
+
 }

@@ -350,7 +350,7 @@ public class View {
                     new Item().view();
                     break;
                 case '2':
-                    new Supplier().view();
+                    new Supplier().listOfSuppliers();
                     break;
                 case '3':
                     PurchaseRequisitionDAO prDAO = new PurchaseRequisitionDAO();

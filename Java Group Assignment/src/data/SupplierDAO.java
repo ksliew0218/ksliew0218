@@ -6,6 +6,7 @@ import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class SupplierDAO {
@@ -290,6 +291,20 @@ public class SupplierDAO {
         return suppliersForItem;
     }
 
+    public List<String> getAllSuppliersDetails() {
+        List<String> suppliers = new ArrayList<>();
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                suppliers.add(line);
+            }
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return suppliers;
+    }
 
 
 }
