@@ -20,9 +20,9 @@ public class Login extends User
         String User_ID;
         String Password;
         Scanner input = new Scanner(System.in);
-        System.out.print("Please input your user id:");
+        System.out.print("\nPlease input your user id   : ");
         User_ID = input.nextLine();
-        System.out.print("Please input your password:");
+        System.out.print("Please input your password  : ");
         Password = input.nextLine();
         Login L = new Login(User_ID,Password);
         if (L.Login_Detail() == 1)

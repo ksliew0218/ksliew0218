@@ -22,7 +22,7 @@ public class VerifyUserRole {
                 }
                 else if (UserArr[4].equals("PM"))
                 {
-                    System.out.println("Welcome to Project Manager Menu");
+                    System.out.println("Welcome to Purchase Manager Menu");
                     View PM = new View();
                     PM.Project_Manager_Menu();
                     break;

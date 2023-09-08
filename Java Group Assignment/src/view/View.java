@@ -3,14 +3,13 @@ package view;
 import data.*;
 import domain.*;
 import utility.Utility;
-
 import java.util.Scanner;
 
 public class View {
     public void mainMenu() {
         char choice;
         do {
-            System.out.println("Welcome to SIGMA SDN BHD (SSB)");
+            System.out.println("\n-----------Welcome to SIGMA SDN BHD (SSB)---------");
             System.out.println("\n\t\t\t1. Login");
             System.out.println("\t\t\t2. Register");
             System.out.println("\t\t\t3. Exit");
@@ -26,7 +25,7 @@ public class View {
                     Register R = new Register();
                     R.Register_main();
                 }
-                case '3' -> System.out.println("Thank you, bye");
+                case '3' -> System.out.println("See you again. Have a good day!");
                 default -> System.out.println("Invalid choice. Please try again.");
             }
         } while (choice != '3');
