@@ -229,9 +229,6 @@ public class Item implements Entry {
         }
     }
 
-
-
-
     public void delete() {
         ItemDAO itemDAO = new ItemDAO();
 
@@ -294,8 +291,14 @@ public class Item implements Entry {
             System.out.print("Enter the PO ID for which you want to update the item stock: ");
             String poID = Utility.readString(10);  // Assuming Utility.readString(int) reads a string with a length limit
 
+            // Validate if the entered PO ID exists
+            if (!poDAO.isPOIDExist(poID)) {
+                System.out.println("The entered PO ID does not exist. Please try again.");
+                continue;  // Skip the rest of the loop and go back to asking for a PO ID
+            }
+
             // Ask for confirmation to update
-            System.out.print("Are you sure you want to update the item stock for PO ID " + poID + "? (Y/N): ");
+            System.out.print("\nAre you sure you want to update the item stock for PO ID " + poID + "? ");
             char confirmUpdate = Utility.readConfirmSelection();  // Assuming Utility.readConfirmSelection() returns 'Y' or 'N'
 
             if (confirmUpdate == 'Y') {

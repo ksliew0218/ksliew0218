@@ -402,8 +402,6 @@ public class ItemDAO {
             return false;
         }
 
-        // After successfully updating the item stock and "Is In Stock" status, update PODetails.txt
-        // Set the last attribute to true for this PO ID
         return poDAO.updateStockInStatus(poID);
     }
 

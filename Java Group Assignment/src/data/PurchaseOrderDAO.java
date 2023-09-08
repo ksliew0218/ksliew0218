@@ -161,6 +161,22 @@ public class PurchaseOrderDAO {
             }
         }
     }
+    public boolean isPOIDExist(String poID) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] fields = line.split("\\" + DELIMITER);
+                if (fields[0].equals(poID)) {
+                    return true;  // PO ID found
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;  // An error occurred while reading the file
+        }
+        return false;  // PO ID not found
+    }
+
 
     public boolean deletePO(String poID) {
         List<String> allPOs = getAllPOs();
