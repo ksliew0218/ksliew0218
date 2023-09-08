@@ -284,33 +284,29 @@ public class PurchaseRequisitionDAO {
         }
     }
 
-    public boolean deletePO(String poID) {
-        File inputFile = new File(FILE_PATH);
-        File tempFile = new File("tempFile.txt");
+    public boolean deletePR(String prID) {
+        List<String> allPRs = getAllPRs();
+        List<String> updatedPRs = new ArrayList<>();
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(inputFile));
-             BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile))) {
-
-            String line;
-            while ((line = reader.readLine()) != null) {
-                if (!line.startsWith(poID + "$")) {
-                    writer.write(line);
-                    writer.newLine();
-                }
+        for (String pr : allPRs) {
+            String currentPRID = pr.split("\\$")[0];
+            if (!currentPRID.equals(prID)) {
+                updatedPRs.add(pr);
             }
+        }
+
+        // 将更新后的 PR 列表写回到文件
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
+            for (String updatedPR : updatedPRs) {
+                writer.write(updatedPR);
+                writer.newLine();
+            }
+            return true;
         } catch (IOException e) {
             e.printStackTrace();
             return false;
         }
-
-        if (!inputFile.delete()) {
-            System.out.println("Could not delete original file");
-            return false;
-        }
-        if (!tempFile.renameTo(inputFile)) {
-            System.out.println("Could not rename temp file");
-            return false;
-        }
-        return true;
     }
+
+
 }

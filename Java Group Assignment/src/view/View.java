@@ -169,8 +169,7 @@ public class View {
                     System.out.println(MnResult);
                 }
                 case '3' -> {
-                    PurchaseRequisition pr = new PurchaseRequisition();
-                    pr.displayPRList(prDAO);
+
                 }
                 case '4' -> {
                     PurchaseRequisition pr = new PurchaseRequisition();
@@ -178,7 +177,6 @@ public class View {
                 }
                 case '5' -> {
                     PurchaseRequisition pr = new PurchaseRequisition();
-                    pr.editMenu(itemDAO, supplierDAO, prDAO);
                 }
                 case '6' -> {
                     System.out.println("Exiting purchase requisition menu.");
@@ -195,7 +193,6 @@ public class View {
         SupplierDAO supplierDAO = new SupplierDAO();
         PurchaseRequisitionDAO prDAO = new PurchaseRequisitionDAO();
         PurchaseOrderDAO poDAO = new PurchaseOrderDAO();
-
         PurchaseOrder poInstance = new PurchaseOrder();
 
         do {
@@ -226,9 +223,6 @@ public class View {
             }
         } while (true);
     }
-
-
-
 
     public void admin_menu()
     {
@@ -334,6 +328,9 @@ public class View {
     public void Purchase_Manager_Menu()
     {
         int exit02 = 0;
+        ItemDAO itemDAO = new ItemDAO();
+        SupplierDAO supplierDAO = new SupplierDAO();
+        PurchaseRequisitionDAO prDAO = new PurchaseRequisitionDAO();
         do
         {
             System.out.println("\t---Purchase Manager Menu---");
@@ -343,10 +340,9 @@ public class View {
                             0. Personal Information
                             1. List of Items (View)
                             2. List of Suppliers (View)
-                            3. Display Requisition (View)
-                            4. Generate Purchase Order (Add/Save/Delete/Edit)
-                            5. List of Purchaser Orders (View)
-                            6. Exit
+                            3. View Requisition Order
+                            4. Purchase Order
+                            5. Exit
                             """);
             System.out.print("Please select a number: ");
             Scanner input_admin = new Scanner(System.in);
@@ -364,12 +360,13 @@ public class View {
                     new Supplier().view();
                     break;
                 case '3':
+                    PurchaseRequisition pr = new PurchaseRequisition();
+                    pr.displayPRList(prDAO);
                     break;
                 case '4':
+                    PurchaseOrderMenu();
                     break;
                 case '5':
-                    break;
-                case '6':
                     exit02 = 1;
                     break;
                 default:
