@@ -111,7 +111,7 @@ public class DailySalesDAO {
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
             String line;
             String prevDate = "";
-            System.out.format("%-15s %-15s %-15s %-15s %-15s %-15s %-15s\n", "Date", "Item Code", "Item Name", "Quantity Sold", "Selling Price", "Tax (6%)", "Total Price of Item (RM)");
+            System.out.format("%-15s %-15s %-15s %-15s %-20s %-15s %-15s\n", "Date", "Item Code", "Item Name", "Quantity Sold", "Selling Price (RM)", "Tax (6%)", "Total Price of Item (RM)");
 
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split("\\" + DELIMITER);
@@ -135,7 +135,7 @@ public class DailySalesDAO {
                 DailySales dailySale = new DailySales(/* populate constructor with parsed data */);
                 allSales.add(dailySale);
 
-                System.out.format("%-15s %-15s %-15s %-15d %-15.2f %-15.2f %-15.2f\n",
+                System.out.format("%-15s %-15s %-15s %-15d %-20.2f %-15.2f %-15.2f\n",
                         saleDate,
                         itemCode,
                         itemName,

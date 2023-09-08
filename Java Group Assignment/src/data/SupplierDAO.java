@@ -47,6 +47,7 @@ public class SupplierDAO {
         List<String> existingSupplierIds = readSupplierIds();
         return existingSupplierIds.contains(supplierId);
     }
+
     private List<String> readSupplierIds() {
         List<String> supplierIds = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
