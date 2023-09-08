@@ -277,4 +277,68 @@ public class PurchaseOrder {
         }
     }
 
+    public void deletePO(PurchaseOrderDAO poDAO) {
+        Scanner scanner = new Scanner(System.in);
+        List<String> allPOs = poDAO.getAllPOs();
+        List<String> poIDs = new ArrayList<>();
+        Map<Integer, String> poMenu = new HashMap<>();
+
+        for (String po : allPOs) {
+            String poID = po.split("\\$")[0];
+            if (poID != null && !poID.isEmpty() && !poID.equals("null")) {
+                if (!poIDs.contains(poID)) {
+                    poIDs.add(poID);
+                }
+            }
+        }
+
+        while (true) {  // This will keep running until user chooses to exit
+            System.out.println("\nAvailable POs:");
+            int counter = 1;
+            for (String poID : poIDs) {
+                System.out.println(counter + ". " + poID);
+                poMenu.put(counter, poID);
+                counter++;
+            }
+
+            System.out.print("\nEnter the number of PO to delete (or 'exit' to finish): ");
+            String choice = scanner.nextLine().trim();
+
+            if ("exit".equalsIgnoreCase(choice)) {
+                break;
+            }
+
+            try {
+                int chosenNumber = Integer.parseInt(choice);
+                if (poMenu.containsKey(chosenNumber)) {
+                    String selectedPOID = poMenu.get(chosenNumber);
+
+                    // Display details of the selected PO
+                    displayPODetails(selectedPOID, poDAO);
+
+                    System.out.print("Are you sure you want to delete this PO? (yes/no): ");
+                    String confirm = scanner.nextLine().trim();
+
+                    if ("yes".equalsIgnoreCase(confirm)) {
+                        // Delete the selected PO
+                        boolean success = poDAO.deletePO(selectedPOID);
+                        if (success) {
+                            System.out.println("PO successfully deleted.");
+                            poIDs.remove(selectedPOID);  // Remove the deleted PO ID from the list
+                            break;  // Exit the loop
+                        } else {
+                            System.out.println("An error occurred while deleting the PO.");
+                        }
+                    } else {
+                        System.out.println("PO deletion cancelled.");
+                    }
+                } else {
+                    System.out.println("\nInvalid choice. Please select a valid number.\n");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("\nInvalid input. Please enter a number.\n");
+            }
+        }
+    }
+
 }
