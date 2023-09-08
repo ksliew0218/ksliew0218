@@ -1,5 +1,6 @@
 package domain;
 
+import java.time.LocalDate;
 import java.util.*;
 
 import data.*;
@@ -9,7 +10,7 @@ import utility.Utility;
 public class PurchaseOrder {
     private String POID;
     private String PRID;  // Related Purchase Requisition ID
-    private String creationDate;
+    private LocalDate creationDate;
     private String createdBy;
     private Map<String, Map<String, String>> items;  // Item Code and its details
 
@@ -33,11 +34,11 @@ public class PurchaseOrder {
         this.PRID = PRID;
     }
 
-    public String getCreationDate() {
+    public LocalDate getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(String creationDate) {
+    public void setCreationDate(LocalDate creationDate) {
         this.creationDate = creationDate;
     }
 
@@ -60,6 +61,8 @@ public class PurchaseOrder {
     public void generatePOFromPR(PurchaseRequisitionDAO prDAO, PurchaseOrderDAO poDAO, SupplierDAO supplierDAO, ItemDAO itemDAO) {
         Scanner scanner = new Scanner(System.in);
         Map<String, Map<String, String>> itemsForNewPO = new HashMap<>();
+        String logedInName = Login.getLoggedInUsername();
+        LocalDate currentDate = LocalDate.now();
         int totalAmount = 0;
 
         // Step 1: Display all available PRs and let user select one
@@ -88,7 +91,6 @@ public class PurchaseOrder {
 
         while (true) {
             // Step 2: Display details of the selected PR
-            System.out.println("\n------ Purchase Requisition Details ------: \n");
             PurchaseRequisition pr = new PurchaseRequisition();
             pr.displayPRDetails(selectedPRID, prDAO);
 
@@ -146,8 +148,8 @@ public class PurchaseOrder {
             String newPOID = "PO" + String.format("%03d", poDAO.getNextPOID());  // Assuming you have a method to get the next unique PO ID
             newPO.setPOID(newPOID);
             newPO.setPRID(selectedPRID);
-            newPO.setCreatedBy("CurrentUserName");  // Replace with the username of the person who is currently logged in
-            newPO.setCreationDate("CurrentDate");  // Replace with the current date
+            newPO.setCreatedBy(logedInName);  // Replace with the username of the person who is currently logged in
+            newPO.setCreationDate(currentDate);  // Replace with the current date
             newPO.setItems(itemsForNewPO);
 
             // Set the total amount
@@ -208,37 +210,44 @@ public class PurchaseOrder {
         List<String> poDetails = poDAO.getPODetails(poID);
 
         // Print Purchase Order details
-        System.out.println("=======================================");
+        System.out.println("\n=======================================");
         System.out.println("========= Purchase Order Details ======");
         System.out.println("=======================================");
         // Assume the first detail contains public information; adjust based on actual data format
         String[] firstDetailArray = poDetails.get(0).split("\\$");
         System.out.println("PO ID: " + poID);
         System.out.println("Related PR ID: " + firstDetailArray[1]);
-        System.out.println("Creation Date: " + firstDetailArray[2]);
-        System.out.println("Created By: " + firstDetailArray[3]);
+        System.out.println("Creation Date: " + firstDetailArray[12]);
+        System.out.println("Created By: " + firstDetailArray[11]);
         System.out.println("Stock In Status: " + (firstDetailArray[14].equals("true") ? "Done Stock In" : "Not yet Stock In"));
         System.out.println("---------------------------------------");
 
         // Print each item's detailed information
         for (String detail : poDetails) {
             String[] detailsArray = detail.split("\\$");
+            double price = Double.parseDouble(detailsArray[5]);
+            int quantity = Integer.parseInt(detailsArray[6]);
+            double itemTotalAmount = price * quantity;
+            totalAmount += itemTotalAmount;
+
             System.out.println("------------------------------");
-            System.out.println("Item Code: " + detailsArray[4]);
-            System.out.println("Product Name: " + detailsArray[5]);
-            System.out.println("Category: " + detailsArray[6]);
-            System.out.println("Price: " + detailsArray[7]);
-            System.out.println("Quantity: " + detailsArray[8]);
-            System.out.println("Supplier Code: " + detailsArray[9]);
-            System.out.println("Supplier Name: " + detailsArray[10]);
-            System.out.println("Supplier Contact: " + detailsArray[11]);
-            System.out.println("Expected Arrival Days: " + detailsArray[12]);
+            System.out.println("Item Code: " + detailsArray[2]);
+            System.out.println("Product Name: " + detailsArray[3]);
+            System.out.println("Category: " + detailsArray[4]);
+            System.out.println("Price: " + detailsArray[5]);
+            System.out.println("Quantity: " + detailsArray[6]);
+            System.out.println("Supplier Code: " + detailsArray[7]);
+            System.out.println("Supplier Name: " + detailsArray[8]);
+            System.out.println("Supplier Contact: " + detailsArray[9]);
+            System.out.println("Expected Arrival Days: " + detailsArray[10]);
+            System.out.println("\nTotal Price: " + itemTotalAmount);
             System.out.println("------------------------------");
         }
 
         // Print total amount; this can be calculated based on your actual data
-        System.out.println("Total Amount: [Calculate based on item details]");
-        System.out.println("=======================================");
+        System.out.println("\n=======================================");
+        System.out.println("Total Amount:" + totalAmount);
+        System.out.println("=======================================\n");
     }
 
     public void displayPOList(PurchaseOrderDAO poDAO) {

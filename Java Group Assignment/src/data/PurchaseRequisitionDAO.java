@@ -38,40 +38,6 @@ public class PurchaseRequisitionDAO {
         }
     }
 
-    public boolean checkDuplicatePRID(String prid) {
-        List<String> existingPRIds = readPRIds();
-        return existingPRIds.contains(prid);
-    }
-
-    private List<String> readPRIds() {
-        List<String> prIds = new ArrayList<>();
-        try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] fields = line.split("\\" + DELIMITER);
-                if (fields.length < 1) {
-                    continue; // skip lines with insufficient data
-                }
-                String existingPRId = fields[0];
-                prIds.add(existingPRId);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return prIds;
-    }
-
-    public void displayPRDetails() {
-        try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                System.out.println(line.replace(DELIMITER, "\t"));
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     public int getNextAvailablePRID() {
         List<String> allPRs = getAllPRs();
 
@@ -141,26 +107,7 @@ public class PurchaseRequisitionDAO {
         }
     }
 
-    public List<String> getPRDetailsByPRID(String prID) {
-        List<String> detailsForPRID = new ArrayList<>();
-        try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                if (line.startsWith(prID + "$")) {
-                    detailsForPRID.add(line);
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return detailsForPRID;
-    }
 
-
-    /**
-     * 获取所有 poStatus 为 false 的 PR
-     * @return List of PRs with poStatus = false
-     */
     public List<String> getAllEditablePRs() {
         List<String> editablePRs = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader("PRDetails.txt"))) {
@@ -213,72 +160,6 @@ public class PurchaseRequisitionDAO {
         }
 
         return updated;
-    }
-
-
-
-
-    public void updateItemQuantityInPR(String prID, String itemCode, int newQuantity) {
-        // Load all PR details from file
-        List<String> allPrDetails = getAllPRs();
-
-        // Check if the item exists in the selected PR
-        String matchingDetail = allPrDetails.stream()
-                .filter(detail -> detail.startsWith(prID + "$" + itemCode + "$"))
-                .findFirst().orElse(null);
-
-        if (matchingDetail == null) {
-            System.out.println("Item not found in the selected PR.");
-            return;
-        }
-
-        // Update the item quantity in the detail string
-        String[] details = matchingDetail.split("\\$");
-        details[5] = String.valueOf(newQuantity);  // Assuming the 6th field is the quantity
-        String updatedDetail = String.join("$", details);
-
-        // Replace the old detail string with the updated one
-        int indexToUpdate = allPrDetails.indexOf(matchingDetail);
-        allPrDetails.set(indexToUpdate, updatedDetail);
-
-        // Save the entire list (with all PR details) back to the file
-        saveUpdatedPRDetails(allPrDetails);
-    }
-
-    public void updatePRDetails(String selectedPRID, List<String> itemsToBeAddedToPO) {
-        // 从文件或其他数据源中读取原有的 PRDetails
-        List<String> originalDetails = getPRDetails(selectedPRID);
-
-        // 创建一个新的 List 来存储更新后的 details
-        List<String> updatedDetails = new ArrayList<>();
-
-        for (String originalDetail : originalDetails) {
-            String[] originalArray = originalDetail.split("\\$");
-            String originalItemCode = originalArray[1];
-
-            // 查找是否有对应的新 detail
-            String newItemDetail = itemsToBeAddedToPO.stream()
-                    .filter(item -> item.split("\\$")[1].equals(originalItemCode))
-                    .findFirst().orElse(null);
-
-            if (newItemDetail != null) {
-                // 替换为新的 detail
-                updatedDetails.add(newItemDetail);
-            } else {
-                // 保留原有的 detail
-                updatedDetails.add(originalDetail);
-            }
-        }
-
-        // 现在，你可以将 updatedDetails 写回到 PRDetails.txt 文件或其他数据源中
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter("PRDetails.txt", false))) {  // false 表示不追加，而是覆盖文件
-            for (String updatedDetail : updatedDetails) {
-                bw.write(updatedDetail);
-                bw.newLine();
-            }
-        } catch (IOException e) {
-            System.out.println("An error occurred while writing to PRDetails.txt: " + e.getMessage());
-        }
     }
 
     public boolean deletePR(String prID) {
