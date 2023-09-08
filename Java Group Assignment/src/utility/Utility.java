@@ -29,7 +29,7 @@ public class Utility {
                 n = Integer.parseInt(str);
                 break;
             } catch (NumberFormatException e) {
-                System.out.print("Invalid integer, please try again:：");
+                System.out.print("Invalid integer, please try again：");
             }
         }
         return n;
@@ -92,7 +92,7 @@ public class Utility {
             }
 
             if (line.length() > limit) {
-                System.out.print("String length（cannot exceed" + limit + "）Invalid input, please try again：");
+                System.out.print("String length（cannot exceed " + limit + "）Invalid input, please try again：");
                 continue;
             }
             break;
@@ -234,7 +234,6 @@ public class Utility {
                 System.out.print("Invalid date format. Please try again. ");
             }
         }
-
         return date;
     }
 
