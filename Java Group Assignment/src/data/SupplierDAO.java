@@ -38,11 +38,6 @@ public class SupplierDAO {
         }
     }
 
-    public boolean checkDuplicateSupplierID(String supplierId) {
-        List<String> existingSupplierIds = readSupplierIds();
-        return existingSupplierIds.contains(supplierId);
-    }
-
     public boolean checkExistingSupplierID(String supplierId) {
         List<String> existingSupplierIds = readSupplierIds();
         return existingSupplierIds.contains(supplierId);

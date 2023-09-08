@@ -291,7 +291,7 @@ public class ItemDAO {
         return count;
     }
 
-    public boolean updateIsInStock(String itemCode, boolean newIsInStock) {
+    public void updateIsInStock(String itemCode, boolean newIsInStock) {
         ArrayList<String> lines = new ArrayList<>();
         boolean itemFound = false;
 
@@ -314,11 +314,11 @@ public class ItemDAO {
             }
         } catch (IOException e) {
             e.printStackTrace();
-            return false;
+            return;
         }
 
         if (!itemFound) {
-            return false;
+            return;
         }
 
         // Write updated lines back to the file
@@ -329,10 +329,8 @@ public class ItemDAO {
             }
         } catch (IOException e) {
             e.printStackTrace();
-            return false;
         }
 
-        return true;
     }
 
     public List<String> getAllItems() {

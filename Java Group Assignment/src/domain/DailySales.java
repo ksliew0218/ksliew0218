@@ -49,12 +49,6 @@ public class DailySales implements Entry {
         return unitPrice * 1.2;  // assuming a markup of 20%
     }
 
-    public String getDateOfSale() {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        return sdf.format(dateOfSale);
-    }
-
-
     public double getTotalAmount() {
         return this.totalAmount;
     }

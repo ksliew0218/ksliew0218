@@ -89,10 +89,10 @@ public class Supplier implements Entry {
         do {
             System.out.print("Enter Supplier ID: ");
             supplierId = Utility.readString(10);
-            if (supplierDAO.checkDuplicateSupplierID(supplierId)) {
+            if (supplierDAO.checkExistingSupplierID(supplierId)) {
                 System.out.println("This Supplier ID already exists. Please enter a unique Supplier ID.");
             }
-        } while (supplierDAO.checkDuplicateSupplierID(supplierId));
+        } while (supplierDAO.checkExistingSupplierID(supplierId));
 
         System.out.print("Enter Supplier Name: ");
         this.supplierName = Utility.readString(50);
