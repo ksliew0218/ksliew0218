@@ -24,7 +24,7 @@ public class VerifyUserRole {
                 {
                     System.out.println("Welcome to Purchase Manager Menu");
                     View PM = new View();
-                    PM.Project_Manager_Menu();
+                    PM.Purchase_Manager_Menu();
                     break;
                 }
                 else if (UserArr[4].equals("AD"))

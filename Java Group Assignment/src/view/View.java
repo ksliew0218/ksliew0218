@@ -241,7 +241,9 @@ public class View {
             System.out.println("2. Search User");
             System.out.println("3. Approve Or Reject Applicant");
             System.out.println("4. Check the reason for reject the applicant");
-            System.out.println("5. Exit");
+            System.out.println("5. Access as Sales Manager");
+            System.out.println("6. Access as Purchase Manager");
+            System.out.println("7. Exit");
             System.out.print("Enter a number:");
             Scanner input_admin = new Scanner(System.in);
             char menu_admin;
@@ -265,6 +267,12 @@ public class View {
                     ad.Reject_reason_history();
                     break;
                 case '5':
+                    Sales_Manager_Menu();
+                    break;
+                case '6':
+                    Purchase_Manager_Menu();
+                    break;
+                case '7':
                     exit = 1;
                     break;
             }
@@ -276,6 +284,7 @@ public class View {
         int exit01 = 0;
         do
         {
+            System.out.println("\t\t\t---Sales Manger Menu---");
             System.out.println(
                     """
 
@@ -290,13 +299,12 @@ public class View {
                             """);
             System.out.print("Please input a number: ");
             Scanner input_admin = new Scanner(System.in);
-            char menu_sales_manahger;
-            menu_sales_manahger = Utility.readChar();
-            switch (menu_sales_manahger)
+            char menu_sales_manager;
+            menu_sales_manager = Utility.readChar();
+            switch (menu_sales_manager)
             {
                 case '0':
-                    Utility PI = new Utility();
-                    PI.PersonalInfo();
+                    Utility.PersonalInfo();
                     break;
                 case '1':
                     ItemEntryMenu();
@@ -323,11 +331,12 @@ public class View {
         }while(exit01 != 1);
     }
 
-    public void Project_Manager_Menu()
+    public void Purchase_Manager_Menu()
     {
         int exit02 = 0;
         do
         {
+            System.out.println("\t---Purchase Manager Menu---");
             System.out.println(
                     """
 
@@ -341,13 +350,12 @@ public class View {
                             """);
             System.out.print("Please select a number: ");
             Scanner input_admin = new Scanner(System.in);
-            char menu_sales_manahger;
-            menu_sales_manahger = Utility.readChar();
-            switch (menu_sales_manahger)
+            char menu_sales_manager;
+            menu_sales_manager = Utility.readChar();
+            switch (menu_sales_manager)
             {
                 case '0':
-                    Utility PI = new Utility();
-                    PI.PersonalInfo();
+                    Utility.PersonalInfo();
                     break;
                 case '1':
                     new Item().view();
