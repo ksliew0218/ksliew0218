@@ -5,3 +5,4 @@ IT004$Fries$2$15.0$SP004$Food$13/09/2023$false$5
 IT005$Nuggets$10$13.0$SP004$food$30/03/2024$true$10
 IT006$Nuggets$1$20.0$SP005$food$13/07/2023$false$5
 IT007$Ribena$10$18.0$SP005$Drinks$14/04/2024$true$10
+IT008$Orange$3$5.0$SP005$Food$20/09/2023$false$3
