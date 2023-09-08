@@ -1,6 +1,7 @@
 package domain;
 
 import data.ItemDAO;
+import data.PurchaseOrderDAO;
 import data.SupplierDAO;
 import utility.Utility;
 
@@ -285,4 +286,36 @@ public class Item implements Entry {
 
     }
 
+    public void addItemStockByPOID() {
+        PurchaseOrderDAO poDAO = new PurchaseOrderDAO();
+        poDAO.getPendingPOs();  // This should print out the pending POs based on your previous code
+
+        while (true) {  // This loop will allow the user to continue adding until they decide to stop
+            System.out.print("Enter the PO ID for which you want to update the item stock: ");
+            String poID = Utility.readString(10);  // Assuming Utility.readString(int) reads a string with a length limit
+
+            // Ask for confirmation to update
+            System.out.print("Are you sure you want to update the item stock for PO ID " + poID + "? (Y/N): ");
+            char confirmUpdate = Utility.readConfirmSelection();  // Assuming Utility.readConfirmSelection() returns 'Y' or 'N'
+
+            if (confirmUpdate == 'Y') {
+                ItemDAO itemDAO = new ItemDAO();
+                if (itemDAO.updateItemStockByPOID(poID, poDAO)) {
+                    System.out.println("Item stock updated successfully!");
+                } else {
+                    System.out.println("Failed to update item stock.");
+                }
+            } else {
+                System.out.println("Operation cancelled.");
+            }
+
+            // Ask if the user wants to continue adding
+            System.out.print("Do you want to continue adding more items? ");
+            char continueAdding = Utility.readConfirmSelection();  // Assuming Utility.readConfirmSelection() returns 'Y' or 'N'
+
+            if (continueAdding == 'N') {
+                break;  // Exit the loop if the user doesn't want to continue
+            }
+        }
+    }
 }
