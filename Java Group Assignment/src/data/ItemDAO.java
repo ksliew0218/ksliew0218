@@ -62,6 +62,13 @@ public class ItemDAO {
     }
 
     public void viewAllItems() {
+        // Print header
+        System.out.printf("%-20s %-20s %-10s %-20s %-15s %-15s %-15s %-15s %-15s%n",
+                "Item Code", "Item Name", "Quantity", "Unit Price(RM)", "Supplier ID",
+                "Category", "Expiry Date", "Is In Stock", "Min Stock Level");
+
+        // Print separator line
+        System.out.println("-------------------------------------------------------------------------------------------------------------------------------------------------------");
 
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
             String line;
@@ -71,22 +78,16 @@ public class ItemDAO {
                     continue; // skip lines with insufficient data
                 }
 
-                // Print each field directly
-                System.out.println("Item Code:           " + fields[0]);
-                System.out.println("Item Name:           " + fields[1]);
-                System.out.println("Quantity:            " + fields[2]);
-                System.out.println("Unit Price:          " + fields[3]);
-                System.out.println("Supplier ID:         " + fields[4]);
-                System.out.println("Category:            " + fields[5]);
-                System.out.println("Expiry Date:         " + (fields[6].isEmpty() ? "N/A" : fields[6]));
-                System.out.println("Is In Stock:         " + fields[7]);
-                System.out.println("Minimum Stock Level: " + fields[8]);
-                System.out.println("----------------------------------------------------");
+                // Print each field in a formatted manner
+                System.out.printf("%-20s %-20s %-10s %-20s %-15s %-15s %-15s %-15s %-15s%n",
+                        fields[0], fields[1], fields[2], fields[3], fields[4],
+                        fields[5], fields[6].isEmpty() ? "N/A" : fields[6], fields[7], fields[8]);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
 
     public boolean deleteItem(String itemCode) {
         List<String> lines = new ArrayList<>();
@@ -137,7 +138,7 @@ public class ItemDAO {
                     System.out.println("Item Code:           " + fields[0]);
                     System.out.println("Item Name:           " + fields[1]);
                     System.out.println("Quantity:            " + fields[2]);
-                    System.out.println("Unit Price:          " + fields[3]);
+                    System.out.println("Unit Price (RM):     " + fields[3]);
                     System.out.println("Supplier ID:         " + fields[4]);
                     System.out.println("Category:            " + fields[5]);
                     System.out.println("Expiry Date:         " + (fields[6].isEmpty() ? "N/A" : fields[6]));
@@ -157,6 +158,14 @@ public class ItemDAO {
     }
 
     public void searchItemsByCategory(String category) {
+        // Print header
+        System.out.printf("%-20s %-20s %-10s %-20s %-15s %-15s %-15s %-15s %-15s%n",
+                "Item Code", "Item Name", "Quantity", "Unit Price (RM)", "Supplier ID",
+                "Category", "Expiry Date", "Is In Stock", "Min Stock Level");
+
+        // Print separator line
+        System.out.println("-----------------------------------------------------------------------------------------------------------------------------------------------------");
+
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
             String line;
             boolean itemFound = false;
@@ -164,18 +173,16 @@ public class ItemDAO {
             while ((line = reader.readLine()) != null) {
                 String[] fields = line.split("\\" + DELIMITER);
                 if (fields.length < 9) {
-                    continue; // Skip lines with insufficient data
+                    continue; // skip lines with insufficient data
                 }
 
                 String existingCategory = fields[5]; // Assuming the category is the sixth field
 
                 if (existingCategory.equalsIgnoreCase(category)) {
-                    // Print item details
-                    System.out.println("----------------------------");
-                    System.out.println("Item Code: " + fields[0]);
-                    System.out.println("Item Name: " + fields[1]);
-                    System.out.println("Quantity: " + fields[2]);
-                    // ... display other fields ...
+                    // Print each field in a formatted manner
+                    System.out.printf("%-20s %-20s %-10s %-20s %-15s %-15s %-15s %-15s %-15s%n",
+                            fields[0], fields[1], fields[2], fields[3], fields[4],
+                            fields[5], fields[6].isEmpty() ? "N/A" : fields[6], fields[7], fields[8]);
                     itemFound = true;
                 }
             }
@@ -188,7 +195,6 @@ public class ItemDAO {
             e.printStackTrace();
         }
     }
-
 
     public boolean editItem(String itemCode, Item updatedItem) {
         List<String> lines = new ArrayList<>();
