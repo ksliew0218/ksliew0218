@@ -103,4 +103,28 @@ public class PurchaseOrderDAO {
         return poDetails;
     }
 
+    public boolean deletePO(String poID) {
+        List<String> allPOs = getAllPOs();
+        List<String> updatedPOs = new ArrayList<>();
+
+        for (String po : allPOs) {
+            String currentPOID = po.split("\\$")[0];
+            if (!currentPOID.equals(poID)) {
+                updatedPOs.add(po);
+            }
+        }
+
+        // 将更新后的 PO 列表写回到文件
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
+            for (String updatedPO : updatedPOs) {
+                writer.write(updatedPO);
+                writer.newLine();
+            }
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 }
