@@ -5,9 +5,7 @@ import domain.Item;
 import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class ItemDAO {
 
@@ -351,5 +349,63 @@ public class ItemDAO {
         }
         return items;
     }
+
+    public boolean updateItemStockByPOID(String poID, PurchaseOrderDAO poDAO) {
+        List<String> poDetails = poDAO.getPODetails(poID);
+        if (poDetails.isEmpty()) {
+            return false;
+        }
+
+        // Read all item data into memory
+        Map<String, Integer> itemStocks = new HashMap<>();  // Item Code -> Stock quantity map
+        List<String> allItems = new ArrayList<>();
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                allItems.add(line);
+                String[] fields = line.split("\\" + DELIMITER);
+                String itemCode = fields[0];  // Assuming item code is at index 0
+                int quantity = Integer.parseInt(fields[2]);  // Assuming quantity is at index 2
+                itemStocks.put(itemCode, quantity);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        // For each line in poDetails, find the item and update its stock
+        for (String detail : poDetails) {
+            String[] fields = detail.split("\\" + DELIMITER);
+            String itemCode = fields[2];  // Assuming item code is at index 2 in PO details
+            int quantity = Integer.parseInt(fields[6]);  // Assuming quantity is at index 6 in PO details
+            itemStocks.put(itemCode, itemStocks.getOrDefault(itemCode, 0) + quantity);
+        }
+
+        // Save the updated stocks and "Is In Stock" status back to "item.txt"
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
+            for (String item : allItems) {
+                String[] fields = item.split("\\" + DELIMITER);
+                String itemCode = fields[0];
+                if (itemStocks.containsKey(itemCode)) {
+                    fields[2] = String.valueOf(itemStocks.get(itemCode));  // Update the stock quantity
+
+                    int minStockLevel = Integer.parseInt(fields[8]);
+                    boolean isInStock = itemStocks.get(itemCode) > minStockLevel;
+                    fields[7] = String.valueOf(isInStock);  // Update the "Is In Stock" status
+                }
+                writer.write(String.join(DELIMITER, fields));
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        // After successfully updating the item stock and "Is In Stock" status, update PODetails.txt
+        // Set the last attribute to true for this PO ID
+        return poDAO.updateStockInStatus(poID);
+    }
+
 
 }

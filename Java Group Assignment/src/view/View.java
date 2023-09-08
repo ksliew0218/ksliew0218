@@ -45,26 +45,41 @@ public class View {
             System.out.println("\t\t\t3. Edit item");
             System.out.println("\t\t\t4. Search item by Name");
             System.out.println("\t\t\t5. Search item by Category");
-            System.out.println("\t\t\t6. Back");
+            System.out.println("\t\t\t6. Add item stock by purchase order");  // New method added
+            System.out.println("\t\t\t7. Back");
 
             System.out.print("Please enter your choice: ");
             choice = Utility.readChar();
 
             switch (choice) {
-                case '1' -> item.add();
-                case '2' -> item.delete();
-                case '3' -> item.edit();
-                case '4' -> item.searchItem_byName();
-                case '5' -> item.searchItem_byCategory();
-                case '6' -> {
+                case '1':
+                    item.add();
+                    break;
+                case '2':
+                    item.delete();
+                    break;
+                case '3':
+                    item.edit();
+                    break;
+                case '4':
+                    item.searchItem_byName();
+                    break;
+                case '5':
+                    item.searchItem_byCategory();
+                    break;
+                case '6':
+                    item.addItemStockByPOID();
+                    break;
+                case '7':
                     // Exit the menu
                     System.out.println("Exiting item entry menu.");
                     return;
-                }
-                default -> System.out.println("Invalid choice. Please try again.");
+                default:
+                    System.out.println("Invalid choice. Please try again.");
             }
         } while (true);
     }
+
 
 
     public void SupplierEntryMenu() {

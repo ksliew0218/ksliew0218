@@ -103,4 +103,63 @@ public class PurchaseOrderDAO {
         return poDetails;
     }
 
+    public boolean updateStockInStatus(String poID) {
+        List<String> updatedPODetails = new ArrayList<>();
+        boolean updated = false;
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] fields = line.split("\\" + DELIMITER);
+                if (fields[0].equals(poID)) {
+                    // Update StockInStatus to true
+                    line = line.substring(0, line.lastIndexOf(DELIMITER) + 1) + "true";
+                    updated = true;
+                }
+                updatedPODetails.add(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
+            for (String detail : updatedPODetails) {
+                writer.write(detail);
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        return updated;
+    }
+
+    public void getPendingPOs() {
+        List<String> pendingPOs = new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] fields = line.split("\\" + DELIMITER);
+                String stockInStatus = fields[fields.length - 1];  // Assuming StockInStatus is the last field
+                if ("false".equals(stockInStatus)) {
+                    pendingPOs.add(fields[0]);  // Assuming POID is at index 0
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // Print the pending POs
+        if (pendingPOs.isEmpty()) {
+            System.out.println("No pending POs found.");
+        } else {
+            System.out.println("Pending POs with StockInStatus 'false': ");
+            for (String poID : pendingPOs) {
+                System.out.println(poID);
+            }
+        }
+    }
+
 }

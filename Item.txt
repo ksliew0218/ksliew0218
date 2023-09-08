@@ -2,6 +2,7 @@ IT001$Fries$3$12.0$SP001$Food$12/02/2023$false$5
 IT002$Banana$2$12.0$SP001$FOod$12/02/2023$false$3
 IT003$Maggie$30$5.0$SP003$Food$30/09/2023$true$5
 IT004$Fries$2$15.0$SP004$Food$13/09/2023$false$5
-IT005$Nuggets$10$13.0$SP004$food$30/03/2024$true$10
-IT006$Nuggets$1$20.0$SP005$food$13/07/2023$false$5
+IT005$Nuggets$10$13.0$SP004$food$30/03/2024$false$10
+IT006$Nuggets$21$20.0$SP005$food$13/07/2023$true$5
 IT007$Ribena$5$18.0$SP005$Drinks$14/04/2024$false$10
+IT008$100plus$30$2.0$SP005$Drinks$01/01/2025$true$10
