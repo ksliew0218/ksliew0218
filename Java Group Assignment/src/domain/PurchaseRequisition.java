@@ -406,6 +406,7 @@ public class PurchaseRequisition {
             System.out.println("Item Code: " + detailsArray[1]);
             System.out.println("Product Name: " + detailsArray[2]);
             System.out.println("Category: " + detailsArray[3]);
+            System.out.println("Price: "+ detailsArray[4]);
             System.out.println("Supplier Code: " + detailsArray[6]);
             System.out.println("Supplier Name: " + detailsArray[7]);
             System.out.println("Current Stock: " + detailsArray[4]);
