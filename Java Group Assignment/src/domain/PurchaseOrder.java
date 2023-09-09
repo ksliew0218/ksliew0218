@@ -257,27 +257,27 @@ public class PurchaseOrder {
 
     public void displayPOList(PurchaseOrderDAO poDAO) {
         List<String> allPOs = poDAO.getAllPOs();
-        List<String> poIDs = new ArrayList<>();
-        Map<Integer, String> poMenu = new HashMap<>();
+        Map<String, String> poIDToCreator = new HashMap<>();
         Scanner scanner = new Scanner(System.in);
 
-        // 处理空文件或没有可用的POs
+        // Handle empty file or no available POs
         if (allPOs == null || allPOs.isEmpty()) {
             System.out.println("No available POs.");
             return;
         }
 
         for (String po : allPOs) {
-            String poID = po.split("\\$")[0];
+            String[] details = po.split("\\$");
+            String poID = details[0];
+            String createdBy = details[11];  // Assuming the 12th field is the creator
+
             if (poID != null && !poID.isEmpty() && !poID.equals("null")) {
-                if (!poIDs.contains(poID)) {
-                    poIDs.add(poID);
-                }
+                poIDToCreator.putIfAbsent(poID, createdBy);
             }
         }
 
-        // 再次检查以确保poIDs也不是空的
-        if (poIDs.isEmpty()) {
+        // Check again to make sure poIDs are also not empty
+        if (poIDToCreator.isEmpty()) {
             System.out.println("No available POs.");
             return;
         }
@@ -285,8 +285,12 @@ public class PurchaseOrder {
         while (true) {
             System.out.println("\nAvailable POs:");
             int counter = 1;
-            for (String poID : poIDs) {
-                System.out.println(counter + ". " + poID);
+            Map<Integer, String> poMenu = new HashMap<>();
+
+            for (Map.Entry<String, String> entry : poIDToCreator.entrySet()) {
+                String poID = entry.getKey();
+                String createdBy = entry.getValue();
+                System.out.println(counter + ". " + poID + " - CREATED BY " + createdBy);
                 poMenu.put(counter, poID);
                 counter++;
             }
@@ -310,6 +314,7 @@ public class PurchaseOrder {
             }
         }
     }
+
 
 
     public void deletePO(PurchaseOrderDAO poDAO) {
