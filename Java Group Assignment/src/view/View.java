@@ -194,7 +194,8 @@ public class View {
             System.out.println("\n\t\t\t1. Generate PO from PR");
             System.out.println("\t\t\t2. Display All POs");
             System.out.println("\t\t\t3. Delete PO");
-            System.out.println("\t\t\t4. Back");
+            System.out.println("\t\t\t4. Edit PO");
+            System.out.println("\t\t\t5. Back");
 
             System.out.print("Please enter your choice: ");
             choice = Utility.readChar();
@@ -210,6 +211,9 @@ public class View {
                     poInstance.deletePO(poDAO);
                     break;
                 case '4':
+                    poInstance.editPOItemQuantity(poDAO);
+                    break;
+                case '5':
                     System.out.println("Exiting purchase order menu.");
                     return;
                 default:

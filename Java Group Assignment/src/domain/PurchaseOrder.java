@@ -252,6 +252,7 @@ public class PurchaseOrder {
         System.out.println("\n=======================================");
         System.out.println("Total Amount:" + totalAmount);
         System.out.println("=======================================\n");
+        totalAmount = 0;
     }
 
     public void displayPOList(PurchaseOrderDAO poDAO) {
@@ -373,6 +374,102 @@ public class PurchaseOrder {
                 System.out.println("\nInvalid input. Please enter a number.\n");
             }
         }
+    }
+
+
+    public void editPOItemQuantity(PurchaseOrderDAO poDAO) {
+        Scanner scanner = new Scanner(System.in);
+
+        // Load all PO details from file
+        List<String> allPOs = poDAO.getAllPOs();
+        List<String> poIDs = new ArrayList<>();
+        Map<Integer, String> poMenu = new HashMap<>();
+
+        // Filter out POs with poStatus as 'false'
+        for (String po : allPOs) {
+            String[] details = po.split("\\$");
+            String poID = details[0];
+            String poStatus = details[details.length - 1].trim();
+            if ("false".equalsIgnoreCase(poStatus) && !poIDs.contains(poID)) {
+                poIDs.add(poID);
+            }
+        }
+
+        if (poIDs.isEmpty()) {
+            System.out.println("No editable POs available.");
+            return;
+        }
+
+        // Display available POs for editing
+        System.out.println("\nAvailable POs for editing:");
+        for (int i = 0; i < poIDs.size(); i++) {
+            System.out.println((i + 1) + ". " + poIDs.get(i));
+            poMenu.put(i + 1, poIDs.get(i));
+        }
+
+        System.out.print("Select the PO number to edit: ");
+        int poIndex;
+        try {
+            poIndex = Integer.parseInt(scanner.nextLine().trim());
+            if (!poMenu.containsKey(poIndex)) {
+                throw new NumberFormatException();
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid selection. Please select a valid PO number.");
+            return;
+        }
+
+        String selectedPOID = poMenu.get(poIndex);
+
+        // Display the PO details before editing
+        displayPODetails(selectedPOID, poDAO);
+
+        System.out.print("Enter the Item Code of the item you wish to modify: ");
+        String itemCode = scanner.nextLine().trim();
+
+        String matchingDetail = allPOs.stream()
+                .filter(detail -> {
+                    String[] splitDetail = detail.split("\\$");
+                    return splitDetail.length > 2 && selectedPOID.equals(splitDetail[0]) && itemCode.equals(splitDetail[2]);
+                })
+                .findFirst().orElse(null);
+
+
+        if (matchingDetail == null) {
+            System.out.println("Item not found in the selected PO.");
+            return;
+        }
+
+        System.out.print("Enter the new quantity for the item: ");
+        int newQuantity;
+        try {
+            newQuantity = Integer.parseInt(scanner.nextLine().trim());
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input. Please enter a valid number.");
+            return;
+        }
+
+        String[] details = matchingDetail.split("\\$");
+        details[5] = String.valueOf(newQuantity);  // Assuming the 6th field is the quantity
+        String updatedDetail = String.join("$", details);
+
+        // Confirm the changes
+        System.out.print("Do you confirm the changes? (yes/no): ");
+        String confirmation = scanner.nextLine().trim().toLowerCase();
+        if (!"yes".equals(confirmation)) {
+            System.out.println("Changes discarded.");
+            return;
+        }
+
+        // Update the item quantity in the PO
+        int indexToUpdate = allPOs.indexOf(matchingDetail);
+        allPOs.set(indexToUpdate, updatedDetail);
+
+        // Save the entire list (with all PO details) back to the file
+        // Assuming you have a method like saveUpdatedPODetails in your DAO
+        poDAO.saveUpdatedPODetails(allPOs);
+
+        System.out.println("Quantity for item " + itemCode + " in " + selectedPOID + " updated to " + newQuantity);
     }
 
 }

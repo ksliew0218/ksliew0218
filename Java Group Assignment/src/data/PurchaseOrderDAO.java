@@ -202,5 +202,14 @@ public class PurchaseOrderDAO {
         }
     }
 
-
+    public void saveUpdatedPODetails(List<String> updatedPODetails) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter("PODetails.txt"))) {
+            for (String detail : updatedPODetails) {
+                bw.write(detail);
+                bw.newLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
