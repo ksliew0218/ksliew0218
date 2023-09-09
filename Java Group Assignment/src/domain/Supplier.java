@@ -194,6 +194,7 @@ public class Supplier implements Entry {
     @Override
     public void delete() {
         SupplierDAO supplierDAO = new SupplierDAO();
+        supplierDAO.viewAllSuppliers();
 
         System.out.print("Enter the Supplier ID of the supplier you want to delete: ");
         String supplierIDToDelete = Utility.readString(10);  // Assuming Utility.readString reads a string from the user.

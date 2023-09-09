@@ -1,6 +1,5 @@
-SP002$KFC$1234567890$kfc@gmail.com$12asdasdas$12/02/2020$2
+SP002$Kentucky Fried Chicken$1234567890$kfc@gmail.com$12asdasdas$12/02/2020$3
 SP001$Tyson$0123456789$ksliew@.com$123,Jalan ABC$01/01/2023$2
 SP003$First Pride$0987654321$firstpride@mail.com$123,first pride company$01/01/2022$3
 SP004$Rong Sheng SDN BHD$01919191919$brian@brain.com$819, Jalan Brian ABC$12/03/2023$4
 SP005$KSliew SDN BHD$0182973919$ksliew@gmail.com$123, Jalan ABC, Parkhill Residence$13/04/2023$2
-SP007$Testing$01234567890$test@test.com$123, Jalan Test$01/02/2020$3
