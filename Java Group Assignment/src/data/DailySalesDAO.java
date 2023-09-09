@@ -85,6 +85,7 @@ public class DailySalesDAO {
 
         double totalAmount = 0.0;
 
+        System.out.println();
         System.out.format("%-15s %-15s %-15s %-15s %-15s %-15s %-15s\n",
                 "Date", "Item Code", "Item Name", "Quantity Sold", "Selling Price", "Tax (6%)", "Total Price of Item (RM)");
 
@@ -102,7 +103,9 @@ public class DailySalesDAO {
         }
 
         System.out.println("\n\n\n\n\n\n");
+        System.out.println("=================================================================================================================================");
         System.out.format("%-95s %-15.2f", "Total Amount (RM):", totalAmount);
+        System.out.println("================================================================================================================================");
         System.out.println();//line spacing
     }
 
@@ -121,7 +124,7 @@ public class DailySalesDAO {
 
                 String saleDate = parts[0];
                 if (!saleDate.equals(prevDate)) {
-                    System.out.println("-----------------------------------------------------------------------------------------------------------------------");
+                    System.out.println("-------------------------------------------------------------------------------------------------------------------------");
                 }
                 prevDate = saleDate;
 
