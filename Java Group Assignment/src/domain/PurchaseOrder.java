@@ -67,6 +67,10 @@ public class PurchaseOrder {
 
         // Step 1: Display all available PRs and let user select one
         List<String> allEditablePRs = prDAO.getAllEditablePRs();
+        if (allEditablePRs.isEmpty()) {
+            System.out.println("No editable PRs are available. Returning to menu.");
+            return; // This will exit the method and return control to wherever this method was called from, likely a menu
+        }
         Map<Integer, String> prMap = displaySelectablePRs(allEditablePRs);
         int selectedPRIndex = -1;
         while (true) {
