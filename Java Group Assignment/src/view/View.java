@@ -2,6 +2,7 @@ package view;
 
 import data.*;
 import domain.*;
+import jdk.jshell.execution.Util;
 import utility.Utility;
 import java.util.Scanner;
 
@@ -9,7 +10,7 @@ public class View {
     public void mainMenu() {
         char choice;
         do {
-            System.out.println("\n-----------Welcome to SIGMA SDN BHD (SSB)---------");
+            System.out.println("\n\t\t\t======Welcome to SIGMA SDN BHD (SSB)=====");
             System.out.println("\n\t\t\t1. Login");
             System.out.println("\t\t\t2. Register");
             System.out.println("\t\t\t3. Exit");
@@ -35,6 +36,7 @@ public class View {
         char choice;
         Item item = new Item();
         do {
+            System.out.println("\n\t\t\t=====Item Entry Menu=====");
             System.out.println("\n\t\t\t1. Add item");
             System.out.println("\t\t\t2. Delete item");
             System.out.println("\t\t\t3. Edit item");
@@ -79,6 +81,7 @@ public class View {
         char choice;
         Supplier supplier = new Supplier();
         do {
+            System.out.println("\n\t\t\t=====Supplier Entry Menu=====");
             System.out.println("\n\t\t\t1. Add Supplier");
             System.out.println("\t\t\t2. Delete Supplier");
             System.out.println("\t\t\t3. Edit Supplier");
@@ -108,6 +111,7 @@ public class View {
         char choice;
         DailySales dailySales = new DailySales();
         do {
+            System.out.println("\n\t\t\t=====Daily-Wise Item Entry=====");
             System.out.println("\n\t\t\t1. Add Daily Sales Entry");
             System.out.println("\t\t\t2. Delete Daily Sales Entry");
             System.out.println("\t\t\t3. Edit Daily Sales Entry");
@@ -140,6 +144,7 @@ public class View {
         PurchaseRequisitionDAO prDAO = new PurchaseRequisitionDAO();
 
         do {
+            System.out.println("\n\t\t\t=====Purchase Requisition Menu======");
             System.out.println("\n\t\t\t1. Auto-Generate Purchase Requisition");
             System.out.println("\t\t\t2. Manually Create New Purchase Requisition");
             System.out.println("\t\t\t3. Display All Purchase Requisitions");
@@ -191,6 +196,7 @@ public class View {
         PurchaseOrder poInstance = new PurchaseOrder();
 
         do {
+            System.out.println("\n\t\t\t=====Purchase Order Menu=====");
             System.out.println("\n\t\t\t1. Generate PO from PR");
             System.out.println("\t\t\t2. Display All POs");
             System.out.println("\t\t\t3. Delete PO");
@@ -201,24 +207,15 @@ public class View {
             choice = Utility.readChar();
 
             switch (choice) {
-                case '1':
-                    poInstance.generatePOFromPR(prDAO, poDAO, supplierDAO, itemDAO);
-                    break;
-                case '2':
-                    poInstance.displayPOList(poDAO);
-                    break;
-                case '3':
-                    poInstance.deletePO(poDAO);
-                    break;
-                case '4':
-                    poInstance.editPOItemQuantity(poDAO);
-                    break;
-                case '5':
+                case '1' -> poInstance.generatePOFromPR(prDAO, poDAO, supplierDAO, itemDAO);
+                case '2' -> poInstance.displayPOList(poDAO);
+                case '3' -> poInstance.deletePO(poDAO);
+                case '4' -> poInstance.editPOItemQuantity(poDAO);
+                case '5' -> {
                     System.out.println("Exiting purchase order menu.");
                     return;
-                default:
-                    System.out.println("Invalid choice. Please try again.");
-                    break;
+                }
+                default -> System.out.println("Invalid choice. Please try again.");
             }
         } while (true);
     }
@@ -229,6 +226,7 @@ public class View {
         int exit = 0;
         do
         {
+            System.out.println("\n\t\t\t=====Admin Menu=====");
             System.out.println("\n0. Personal Information");
             System.out.println("1. Check all applicant information");
             System.out.println("2. Search User");
@@ -241,33 +239,17 @@ public class View {
             Scanner input_admin = new Scanner(System.in);
             char menu_admin;
             menu_admin = Utility.readChar();
-            switch (menu_admin)
-            {
-                case '0':
-                    Utility PI = new Utility();
-                    PI.PersonalInfo();
-                    break;
-                case '1':
-                    ad.readfile();
-                    break;
-                case '2':
-                    ad.search_user_id();
-                    break;
-                case '3':
-                    ad.search_and_decision();
-                    break;
-                case '4':
-                    ad.Reject_reason_history();
-                    break;
-                case '5':
-                    Sales_Manager_Menu();
-                    break;
-                case '6':
-                    Purchase_Manager_Menu();
-                    break;
-                case '7':
-                    exit = 1;
-                    break;
+            switch (menu_admin) {
+                case '0' -> {
+                    Utility.PersonalInfo();
+                }
+                case '1' -> ad.readfile();
+                case '2' -> ad.search_user_id();
+                case '3' -> ad.search_and_decision();
+                case '4' -> ad.Reject_reason_history();
+                case '5' -> Sales_Manager_Menu();
+                case '6' -> Purchase_Manager_Menu();
+                case '7' -> exit = 1;
             }
         } while(exit != 1);
     }
@@ -277,7 +259,7 @@ public class View {
         int exit01 = 0;
         do
         {
-            System.out.println("\t\t\t\n---Sales Manger Menu---");
+            System.out.println("\n\t\t\t=====Sales Manger Menu=====");
             System.out.println(
                     """
 
@@ -290,37 +272,21 @@ public class View {
                             6. Back
                             """);
             System.out.print("Please input a number: ");
-            Scanner input_admin = new Scanner(System.in);
             char menu_sales_manager;
             menu_sales_manager = Utility.readChar();
-            switch (menu_sales_manager)
-            {
-                case '0':
-                    Utility.PersonalInfo();
-                    break;
-                case '1':
-                    ItemEntryMenu();
-                    break;
-                case '2':
-                    SupplierEntryMenu();
-                    break;
-                case '3':
-                    DailySalesEntryMenu();
-                    break;
-                case '4':
-                    CreatePrMenu();
-                    break;
-                case '5':
+            switch (menu_sales_manager) {
+                case '0' -> Utility.PersonalInfo();
+                case '1' -> ItemEntryMenu();
+                case '2' -> SupplierEntryMenu();
+                case '3' -> DailySalesEntryMenu();
+                case '4' -> CreatePrMenu();
+                case '5' -> {
                     PurchaseOrderDAO poDAO = new PurchaseOrderDAO();
                     PurchaseOrder poInstance = new PurchaseOrder();
                     poInstance.displayPOList(poDAO);
-                    break;
-                case '6':
-                    exit01 = 1;
-                    break;
-                default:
-                    System.out.println("Invalid value");
-                    break;
+                }
+                case '6' -> exit01 = 1;
+                default -> System.out.println("Invalid value");
             }
         }while(exit01 != 1);
     }
@@ -330,7 +296,7 @@ public class View {
         int exit02 = 0;
         do
         {
-            System.out.println("\t---Purchase Manager Menu---");
+            System.out.println("\n\t\t\t=====Purchase Manager Menu=====");
             System.out.println(
                     """
 
@@ -342,34 +308,20 @@ public class View {
                             5. Exit
                             """);
             System.out.print("Please select a number: ");
-            Scanner input_admin = new Scanner(System.in);
             char menu_sales_manager;
             menu_sales_manager = Utility.readChar();
-            switch (menu_sales_manager)
-            {
-                case '0':
-                    Utility.PersonalInfo();
-                    break;
-                case '1':
-                    new Item().view();
-                    break;
-                case '2':
-                    new Supplier().listOfSuppliers();
-                    break;
-                case '3':
+            switch (menu_sales_manager) {
+                case '0' -> Utility.PersonalInfo();
+                case '1' -> new Item().view();
+                case '2' -> new Supplier().listOfSuppliers();
+                case '3' -> {
                     PurchaseRequisitionDAO prDAO = new PurchaseRequisitionDAO();
                     PurchaseRequisition pr = new PurchaseRequisition();
                     pr.displayPRList(prDAO);
-                    break;
-                case '4':
-                    PurchaseOrderMenu();
-                    break;
-                case '5':
-                    exit02 = 1;
-                    break;
-                default:
-                    System.out.println("Invalid value");
-                    break;
+                }
+                case '4' -> PurchaseOrderMenu();
+                case '5' -> exit02 = 1;
+                default -> System.out.println("Invalid value");
             }
         }while(exit02 != 1);
     }
