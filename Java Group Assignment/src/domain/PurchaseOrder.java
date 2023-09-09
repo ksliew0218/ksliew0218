@@ -450,7 +450,7 @@ public class PurchaseOrder {
         }
 
         String[] details = matchingDetail.split("\\$");
-        details[5] = String.valueOf(newQuantity);  // Assuming the 6th field is the quantity
+        details[6] = String.valueOf(newQuantity);  // Assuming the 6th field is the quantity
         String updatedDetail = String.join("$", details);
 
         // Confirm the changes
