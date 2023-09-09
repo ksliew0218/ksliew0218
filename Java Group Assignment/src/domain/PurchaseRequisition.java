@@ -339,24 +339,28 @@ public class PurchaseRequisition {
 
     public void displayPRList(PurchaseRequisitionDAO prDAO) {
         List<String> allPRs = prDAO.getAllPRs();
-        List<String> prIDs = new ArrayList<>();
-        Map<Integer, String> prMenu = new HashMap<>();
+        Map<String, String> prIDToCreator = new HashMap<>();
         Scanner scanner = new Scanner(System.in);
 
         for (String pr : allPRs) {
-            String prID = pr.split("\\$")[0];
+            String[] details = pr.split("\\$");
+            String prID = details[0];
+            String createdBy = details[9];  // Assuming the 10th field is the creator
+
             if (prID != null && !prID.isEmpty() && !prID.equals("null")) {
-                if (!prIDs.contains(prID)) {
-                    prIDs.add(prID);
-                }
+                prIDToCreator.putIfAbsent(prID, createdBy);
             }
         }
 
         while (true) {
             System.out.println("\nAvailable PRs:");
             int counter = 1;
-            for (String prID : prIDs) {
-                System.out.println(counter + ". " + prID);
+            Map<Integer, String> prMenu = new HashMap<>();
+
+            for (Map.Entry<String, String> entry : prIDToCreator.entrySet()) {
+                String prID = entry.getKey();
+                String createdBy = entry.getValue();
+                System.out.println(counter + ". " + prID + " - CREATED BY " + createdBy);
                 prMenu.put(counter, prID);
                 counter++;
             }
@@ -380,6 +384,7 @@ public class PurchaseRequisition {
             }
         }
     }
+
 
     public void displayPRDetails(String prID, PurchaseRequisitionDAO prDAO) {
         List<String> prDetails = prDAO.getPRDetails(prID);
