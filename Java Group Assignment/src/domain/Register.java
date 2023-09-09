@@ -51,7 +51,7 @@ public class Register extends User{
         while (UserId01 == 0)
         {
             int bool = 0;
-            System.out.print("Enter User ID");
+            System.out.print("Enter User ID: ");
             UserId = Sc3.nextLine();
             try (FileReader myData = new FileReader("UserData.txt"))
             {
@@ -63,7 +63,7 @@ public class Register extends User{
 
                     if (UserArr[0].equals(UserId))
                     {
-                        System.out.println("Already Have This UserID");
+                        System.out.println("This UserID already exist, please try another UserID");
                         bool = 1;
                     }
                 }
@@ -169,7 +169,7 @@ public class Register extends User{
             }
             else
             {
-                System.out.println("Please input the valid number");
+                System.out.println("Please input the valid number.");
             }
         }
         Register R = new Register(UserId,UserPass,UserGender,UserAge,Role,"Pending");
@@ -179,7 +179,7 @@ public class Register extends User{
         try {
             return Integer.parseInt(value);
         } catch (NumberFormatException e) {
-            System.out.println("Please input integer");
+            System.out.println("Please input integer.");
             return 0;
         }
     }

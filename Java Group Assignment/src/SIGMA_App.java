@@ -1,5 +1,3 @@
-
-import domain.PurchaseRequisition;
 import view.View;
 
 public class SIGMA_App {
