@@ -25,7 +25,7 @@ public class PurchaseRequisition {
     private List<Map<String, String>> prDetailsList = new ArrayList<>();
 
     public PurchaseRequisition() {
-        this.salesManagerID = Login.getLoggedInUsername(); // 直接从Login类获取当前登录的用户名
+        this.salesManagerID = Login.getLoggedInUsername();
     }
 
     // 修改后的构造函数
@@ -249,14 +249,14 @@ public class PurchaseRequisition {
                 continue;
             }
 
-            int requiredQuantity = 0;  // 初始化变量
-            while (true) {  // 循环直到获取有效输入
+            int requiredQuantity = 0;
+            while (true) {
                 try {
                     System.out.print("\nEnter the recommend quantity for item " + itemCode + ": ");
-                    requiredQuantity = Integer.parseInt(scanner.nextLine().trim());  // 读取并转换为整数
+                    requiredQuantity = Integer.parseInt(scanner.nextLine().trim());
                     break;  // 如果转换成功，退出循环
                 } catch (NumberFormatException e) {
-                    System.out.println("Invalid input. Please enter a number.");  // 输出错误信息
+                    System.out.println("Invalid input. Please enter a number.");
                 }
             }
 
@@ -345,7 +345,7 @@ public class PurchaseRequisition {
         for (String pr : allPRs) {
             String[] details = pr.split("\\$");
             String prID = details[0];
-            String createdBy = details[9];  // Assuming the 10th field is the creator
+            String createdBy = details[9];
 
             if (prID != null && !prID.isEmpty() && !prID.equals("null")) {
                 prIDToCreator.putIfAbsent(prID, createdBy);
@@ -392,7 +392,6 @@ public class PurchaseRequisition {
         // 打印购买申请的标题和公共信息
         System.out.println("\n------ Purchase Requisition Details ------");
         System.out.println("PR ID: " + prID);
-        // 假设第一个详细信息包含公共信息，可以根据实际数据格式进行调整
         String[] firstDetailArray = prDetails.get(0).split("\\$");
         System.out.println("Creation Date: " + firstDetailArray[10]);
         System.out.println("Created By: " + firstDetailArray[9]);
@@ -420,7 +419,7 @@ public class PurchaseRequisition {
     public void addItem(String selectedPRID, ItemDAO itemDAO, SupplierDAO supplierDAO, PurchaseRequisitionDAO prDAO) {
         Scanner scanner = new Scanner(System.in);
 
-        String loggedInUsername = Login.getLoggedInUsername();  // Assuming you have this method.
+        String loggedInUsername = Login.getLoggedInUsername();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String creationDate = sdf.format(new Date());
 
@@ -478,7 +477,7 @@ public class PurchaseRequisition {
         }
 
         String[] details = matchingDetail.split("\\$");
-        details[5] = String.valueOf(newQuantity);  // Assuming the 6th field is the quantity
+        details[5] = String.valueOf(newQuantity);
         String updatedDetail = String.join("$", details);
 
         // Confirm the changes

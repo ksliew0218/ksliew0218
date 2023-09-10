@@ -46,7 +46,7 @@ public class PurchaseOrderDAO {
 
 
     public int getNextPOID() {
-        int maxPOID = 0;  // 初始化最大 POID 为 0。
+        int maxPOID = 0;
 
         try (BufferedReader br = new BufferedReader(new FileReader(FILE_PATH))) {
             String line;
@@ -60,11 +60,11 @@ public class PurchaseOrderDAO {
             }
         } catch (IOException e) {
             e.printStackTrace();
-            return -1;  // 返回 -1 表示出现错误。
+            return -1;
         }
 
         if (maxPOID == 0) {
-            return 1;  // 如果文件是空的或没有 POID，返回 1，意味着下一个 POID 应该是 "PO001"。
+            return 1;
         }
 
         return maxPOID + 1;
@@ -86,7 +86,7 @@ public class PurchaseOrderDAO {
     public List<String> getPODetails(String poID) {
         List<String> poDetails = new ArrayList<>();
         try {
-            File file = new File("PODetails.txt");  // 使用你的文件路径
+            File file = new File("PODetails.txt");
             Scanner scanner = new Scanner(file);
 
             while (scanner.hasNextLine()) {
@@ -142,9 +142,9 @@ public class PurchaseOrderDAO {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] fields = line.split("\\" + DELIMITER);
-                String stockInStatus = fields[fields.length - 1];  // Assuming StockInStatus is the last field
+                String stockInStatus = fields[fields.length - 1];
                 if ("false".equals(stockInStatus)) {
-                    pendingPOs.add(fields[0]);  // Assuming POID is at index 0
+                    pendingPOs.add(fields[0]);
                 }
             }
         } catch (IOException e) {

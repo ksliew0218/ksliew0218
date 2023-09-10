@@ -43,7 +43,7 @@ public class PurchaseRequisitionDAO {
 
         // 在此处添加检查：
         if (allPRs == null || allPRs.isEmpty()) {
-            return 1;  // 如果allPRs是null或为空，则返回初始ID 1。
+            return 1;
         }
 
         int maxID = 0;
@@ -51,13 +51,12 @@ public class PurchaseRequisitionDAO {
             String[] details = pr.split("\\$");
             try {
                 if(details[0].length() >= 5) {
-                    int currentID = Integer.parseInt(details[0].substring(2, 5));  // 只提取PR后的三位数
+                    int currentID = Integer.parseInt(details[0].substring(2, 5));
                     if (currentID > maxID) {
                         maxID = currentID;
                     }
                 }
             } catch (NumberFormatException e) {
-                // 如果转换失败，则跳过这个条目并继续下一个
                 continue;
             }
         }

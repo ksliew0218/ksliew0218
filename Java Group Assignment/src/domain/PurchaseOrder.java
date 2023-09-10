@@ -200,7 +200,7 @@ public class PurchaseOrder {
         return prMap;
     }
 
-    private int totalAmount;  // 添加这一行来存储总金额。
+    private int totalAmount;
 
     public int getTotalAmount() {
         return totalAmount;
