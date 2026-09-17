@@ -4,7 +4,7 @@
 
 ### Code. Chess. Court.
 
-Full stack developer at **De Stijl Technology** · Kuala Lumpur, Malaysia
+Full stack developer at **Raptors Technology** · Kuala Lumpur, Malaysia
 
 I build software from the interface to the API and the cloud.<br>
 Away from the keyboard, you'll find me at a Xiangqi board or on the badminton court.
